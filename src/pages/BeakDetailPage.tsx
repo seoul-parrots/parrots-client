@@ -65,7 +65,7 @@ const AuthorUsername = styled.span`
   line-height: 19px;
 `;
 
-const AuthorMessage = styled.span`
+const AuthorBio = styled.span`
   font-size: 16px;
   line-height: 27px;
 `;
@@ -116,11 +116,11 @@ const BeakDetailPage = () => {
                   <AuthorUsername>@beomjun.gil</AuthorUsername>
                 </AuthorSummary>
               </AuthorInnerContainer>
-              <AuthorMessage>
+              <AuthorBio>
                 I’m guitarlist who knows
                 <br />
                 Programming.
-              </AuthorMessage>
+              </AuthorBio>
             </AuthorInfo>
           </DetailBox>
         </RightBoxContainer>

@@ -6,6 +6,7 @@ import { AnimatePresence } from 'framer-motion';
 import FeedPage from '@pages/FeedPage';
 import BeakDetailPage from '@pages/BeakDetailPage';
 import MyBeakListPage from '@pages/MyBeakListPage';
+import MyProfilePage from '@pages/MyProfilePage';
 
 const Router = () => (
   <AnimatePresence>
@@ -17,7 +18,7 @@ const Router = () => (
           <Route path="/feed" element={<FeedPage />} />
           <Route path="/beak/:id" element={<BeakDetailPage />} />
           <Route path="/my/beaks" element={<MyBeakListPage />} />
-          <Route path="/my/profile" element={<MyBeakListPage />} />
+          <Route path="/my/profile" element={<MyProfilePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

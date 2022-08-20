@@ -35,6 +35,6 @@ export const maskedText = css`
 `;
 
 export const gradientBackground = css`
-  background-size: 100% auto;
+  background-size: cover;
   background: url(${BgGradient}) no-repeat center;
 `;

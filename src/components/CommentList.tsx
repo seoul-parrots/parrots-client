@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import { memo } from 'react';
 import CommentListItem from '@components/CommentListItem';
 import getAvatarUrl from '@utils/getAvatarUrl';
-import { boxStyles, focusTextStyles } from '@styles';
+import { boxStyles } from '@styles';
+import RoundButton from '@components/RoundButton';
 
 const Container = styled.div`
   margin-right: 16px;
@@ -54,28 +55,12 @@ const Input = styled.input`
   }
 `;
 
-const SubmitButton = styled.button`
-  display: flex;
-  align-items: center;
-  padding: 11px 23px;
-
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.25);
-  border-radius: 63px;
-
-  margin-left: auto;
-  outline: none;
-  color: #000000;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 25px;
-  ${focusTextStyles};
-  cursor: pointer;
-`;
-
 const CommentCount = styled.span`
   opacity: 0.5;
+`;
+
+const SubmitButton = styled(RoundButton)`
+  margin-left: auto;
 `;
 
 export interface CommentListProps {

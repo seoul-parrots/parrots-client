@@ -1,7 +1,6 @@
 import Button from '@components/Button';
 import { ArrowRight } from '@components/Icon';
 import { memo } from 'react';
-import Spacer from '@components/Spacer';
 import useInputProps from '@hooks/useInputProps';
 import TextArea from '@components/TextArea';
 import { Logo, Title, Box, BottomContainer } from './components';
