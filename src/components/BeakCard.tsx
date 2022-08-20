@@ -135,7 +135,6 @@ interface MyBeakCardProps extends BaseBeakCardProps {
   variant: 'mine';
   commentCount: number;
   title: string;
-  author: string;
 }
 
 const COLORS = ['#ffa5ea', '#f8dfd8', '#45dff8', '#bc8deb'];
