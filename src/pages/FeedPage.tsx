@@ -1,4 +1,3 @@
-import BeakCard from '@components/BeakCard';
 import SampleMp3 from '@assets/sample.mp3';
 import PageLayout from '@components/layouts/PageLayout';
 import styled from '@emotion/styled';
@@ -75,9 +74,7 @@ const FeedPage = () => {
             {TAGS.map(({ title, options }) => (
               <RightBoxItem key={title} title={title}>
                 {options.map((option) => (
-                  <Tag key={option} title={option}>
-                    {option}
-                  </Tag>
+                  <Tag key={option}>{option}</Tag>
                 ))}
               </RightBoxItem>
             ))}

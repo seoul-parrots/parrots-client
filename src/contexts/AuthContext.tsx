@@ -3,6 +3,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -44,16 +45,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const cosmosClient = useRef<SigningStargateClient | null>(null);
   const [address, setAddress] = useState<string | null>(null);
 
+  useEffect(() => {
+    (async () => {
+      if (!window.keplr) {
+        throw new Error('Keplr is not available');
+      }
+
+      await window.keplr.experimentalSuggestChain(TESTNET_CHAIN_INFO);
+      await window.keplr.enable(CHAIN_ID);
+
+      const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
+
+      cosmosClient.current = await SigningStargateClient.connectWithSigner(
+        ENDPOINT,
+        offlineSigner
+      );
+    })();
+  }, []);
+
   const authenticate = useCallback(async () => {
     setIsAuthenticating(true);
 
     if (!window.keplr) {
       throw new Error('Keplr is not available');
     }
-
-    await window.keplr.experimentalSuggestChain(TESTNET_CHAIN_INFO);
-
-    await window.keplr.enable(CHAIN_ID);
 
     const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
 

@@ -108,6 +108,7 @@ const RespectCount = styled.div`
   line-height: 19px;
   color: #ffffff;
   opacity: 0.5;
+  margin-left: auto;
 `;
 
 interface BaseBeakCardProps {
