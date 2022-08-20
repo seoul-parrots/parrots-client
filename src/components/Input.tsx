@@ -11,6 +11,9 @@ const LabelContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+  font-size: 14px;
+  line-height: 17px;
+  color: rgba(255, 255, 255, 0.5);
 `;
 
 const InnerContainer = styled.label`
@@ -61,7 +64,7 @@ const Input = ({
       {label && (
         <LabelContainer>
           <span>{label}</span>
-          {labelRight}
+          <span>{labelRight}</span>
         </LabelContainer>
       )}
       <InnerContainer className={className}>
