@@ -1,5 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["index.ts", "src", "vite.d.ts", ".eslintrc.js", "vite.config.ts"],
+  "include": ["index.ts", "src", "vite.d.ts", ".eslintrc.js", "vite.config.ts",
+    "svgr-cli.template.js", "svgr-cli.config.js", "scripts"],
   "exclude": []
 }

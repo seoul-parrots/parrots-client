@@ -8,19 +8,24 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint -c .eslintrc.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "generate:icons": "svgr --template ./svgr-cli.template.js --config-file ./svgr-cli.config.js --no-prettier ./src/components/Icon/svgs/*.svg --out-dir ./src/components/Icon/generated && node scripts/generateIconExports.js"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "yarn lint --fix"
   },
   "dependencies": {
+    "@cosmjs/stargate": "^0.28.13",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
+    "framer-motion": "^7.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
+    "@keplr-wallet/types": "^0.10.17",
+    "@svgr/cli": "^6.3.1",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
@@ -36,7 +41,6 @@
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.1",
-    "immer": "^9.0.15",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4",
