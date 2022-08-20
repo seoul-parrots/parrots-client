@@ -19,7 +19,6 @@
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "date-fns": "^2.29.2",
-    "emotion-reset": "^3.0.1",
     "framer-motion": "^7.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

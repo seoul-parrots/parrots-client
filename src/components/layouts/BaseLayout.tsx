@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import LogoTypo from '@assets/images/logo_typo.svg';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
@@ -40,8 +40,10 @@ const BaseLayout = () => {
   const { isAuthenticated } = useAuth();
   return (
     <Root>
-      <Header isSignedIn>
-        <Logo src={LogoTypo} alt="Parrots" />
+      <Header isSignedIn={isAuthenticated}>
+        <Link to="/">
+          <Logo src={LogoTypo} alt="Parrots" />
+        </Link>
       </Header>
       <Contents>
         <Outlet />

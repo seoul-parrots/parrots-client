@@ -27,6 +27,24 @@ const Wallet = styled.div`
   border-radius: 20px;
 `;
 
+const WalletInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
+const WalletName = styled.span`
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+`;
+
+const WalletAddress = styled.span`
+  font-size: 16px;
+  line-height: 19px;
+  opacity: 0.5;
+`;
+
 const Avatar = styled.img`
   height: 60px;
 `;
@@ -56,6 +74,10 @@ const FirstStep = ({ onSubmit }: FirstStepProps) => {
       <Description>Connected Wallet</Description>
       <Wallet>
         <Avatar src={getAvatarUrl(address)} />
+        <WalletInfo>
+          <WalletName>YEAH</WalletName>
+          <WalletAddress>{address}</WalletAddress>
+        </WalletInfo>
       </Wallet>
       <BottomContainer>
         <OtherWallet>Other wallet?</OtherWallet>

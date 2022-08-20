@@ -68,8 +68,7 @@ const FeedPage = () => {
         <RightBoxContainer>
           <SearchBox>
             <Input
-              leftIcon={<Search />}
-              size={24}
+              leftIcon={<Search size={24} />}
               placeholder="Where’s your inspiration"
               variant="small"
             />

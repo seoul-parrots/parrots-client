@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  MouseEvent,
+} from 'react';
 import styled from '@emotion/styled';
 import { boxStyles } from '@styles';
 import WaveSurfer from 'wavesurfer.js';
@@ -22,7 +29,7 @@ const Wave = styled.div<{ isDetail: boolean }>`
         `};
 `;
 
-const InnerContainer = styled.div`
+const InnerContainer = styled.div<{ isClickable: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -30,6 +37,12 @@ const InnerContainer = styled.div`
   gap: 12px;
 
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  ${({ isClickable }) =>
+    isClickable &&
+    css`
+      cursor: pointer;
+    `};
 `;
 
 const PlayButton = styled.button<{ isPlaying: boolean; isShowText: boolean }>`
@@ -72,6 +85,7 @@ const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
 `;
 
 const Title = styled.span`
@@ -94,7 +108,6 @@ const RespectCount = styled.div`
   line-height: 19px;
   color: #ffffff;
   opacity: 0.5;
-  margin-left: auto;
 `;
 
 interface BaseBeakCardProps {
@@ -104,6 +117,7 @@ interface BaseBeakCardProps {
   respectCount: number;
   commentCount?: unknown;
   className?: string;
+  onClick?: () => void;
 }
 
 interface FeedBeakCardProps extends BaseBeakCardProps {
@@ -138,6 +152,7 @@ const BeakCard = ({
   respectCount,
   commentCount,
   className,
+  onClick,
 }: BeakCardProps) => {
   const waveSurferRef = useRef<WaveSurfer>();
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -166,11 +181,15 @@ const BeakCard = ({
     waveSurferRef.current.load(audioRef.current);
   }, [progressColor, variant]);
 
-  const playOrPause = useCallback(() => {
-    if (!waveSurferRef.current) return;
-    waveSurferRef.current.playPause();
-    setIsPlaying((prev) => !prev);
-  }, []);
+  const handleClickPlay = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      event.stopPropagation();
+      if (!waveSurferRef.current) return;
+      waveSurferRef.current.playPause();
+      setIsPlaying((prev) => !prev);
+    },
+    []
+  );
 
   const isDetail = variant === 'detail';
 
@@ -180,11 +199,11 @@ const BeakCard = ({
       <audio ref={audioRef} src={url}>
         <track kind="captions" />
       </audio>
-      <InnerContainer>
+      <InnerContainer onClick={onClick} isClickable={!!onClick}>
         <PlayButton
           isPlaying={isPlaying}
           isShowText={isDetail}
-          onClick={playOrPause}
+          onClick={handleClickPlay}
         >
           {isPlaying ? <Pause size={20} /> : <Play size={20} />}
           {isDetail && <span>{isPlaying ? 'Pause' : 'Play'}</span>}

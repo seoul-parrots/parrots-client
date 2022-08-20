@@ -73,7 +73,7 @@ const LoginPage = () => {
           </HighlightTextContainer>
         </Title>
         <Description>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Share your musical moments, and make your new inspiration.
         </Description>
         <ConnectButton leftIcon={<Keplr />} onClick={() => navigate('signup')}>
           Connect Wallet
