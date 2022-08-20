@@ -4,8 +4,9 @@ import LogoSymbol from '@assets/images/logo_symbol.svg';
 import Button from '@components/Button';
 import { Keplr } from '@components/Icon';
 import { useNavigate } from 'react-router-dom';
+import PageAnimation from '@components/layouts/PageAnimation';
 
-const Container = styled.div`
+const Container = styled(PageAnimation)`
   display: flex;
   justify-content: center;
 `;

@@ -7,8 +7,9 @@ import useSteps from '@useSteps';
 import StepContainer from '@components/StepContainer';
 import SecondStep from '@components/signup/SecondStep';
 import ThirdStep from '@components/signup/ThirdStep';
+import PageAnimation from '@components/layouts/PageAnimation';
 
-const Container = styled.div`
+const Container = styled(PageAnimation)`
   display: flex;
   justify-content: center;
   align-items: center;
