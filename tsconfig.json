@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "isolatedModules": true,
+
+    "outDir": "./dist",
+    "paths": {
+      "@*": ["./src/*"],
+      "@src/*": ["./src/*"]
+    },
+    "lib": ["dom", "dom.iterable"],
+    "jsx": "react-jsx",
+
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+
+    "allowJs": true,
+    "checkJs": true,
+
+    "declaration": true,
+    "sourceMap": true,
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+
+    "skipLibCheck": true,
+    "removeComments": true
+  },
+  "include": ["index.ts", "src", "vite.d.ts"]
+}
