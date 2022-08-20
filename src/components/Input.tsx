@@ -60,7 +60,7 @@ const Input = ({
     <Container>
       {label && (
         <LabelContainer>
-          {label}
+          <span>{label}</span>
           {labelRight}
         </LabelContainer>
       )}
