@@ -28,23 +28,23 @@ const SignUpPage = () => {
   const { x, next, prev, containerRef, index } = useSteps(3);
 
   useLayoutEffect(() => {
-    // authenticate().catch((error) => {
-    //   alert(error);
-    //   navigate('/');
-    // });
+    authenticate().catch((error) => {
+      alert(error);
+      navigate('/');
+    });
   }, [authenticate, navigate]);
-
-  // if (isAuthenticating) {
-  //   return <>Loading...</>;
-  // }
-  //
-  // if (!isAuthenticated) {
-  //   return <Navigate to="/" />;
-  // }
 
   const handleSubmit = useCallback(() => {
     navigate('/feed');
   }, [navigate]);
+
+  if (isAuthenticating) {
+    return <>Loading...</>;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
   return (
     <Container>

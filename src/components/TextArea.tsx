@@ -49,6 +49,7 @@ const StyledTextArea = styled.textarea`
 
   color: #ffffff;
   resize: none;
+  font-family: 'Inter', sans-serif;
 
   ::placeholder {
     opacity: 0.1;

@@ -3,6 +3,7 @@ import Button from '@components/Button';
 import { ArrowRight } from '@components/Icon';
 import { memo } from 'react';
 import { useAuthenticatedAuth } from '@contexts/AuthContext';
+import getAvatarUrl from '@utils/getAvatarUrl';
 import { Logo, Title, Box, BottomContainer } from './components';
 
 const Description = styled.div`
@@ -43,7 +44,7 @@ export interface FirstStepProps {
 }
 
 const FirstStep = ({ onSubmit }: FirstStepProps) => {
-  // const { address } = useAuthenticatedAuth();
+  const { address } = useAuthenticatedAuth();
   return (
     <Box>
       <Logo />
@@ -53,7 +54,9 @@ const FirstStep = ({ onSubmit }: FirstStepProps) => {
         Welcome to Parrots
       </Title>
       <Description>Connected Wallet</Description>
-      <Wallet>{/* <Avatar src={address} /> */}</Wallet>
+      <Wallet>
+        <Avatar src={getAvatarUrl(address)} />
+      </Wallet>
       <BottomContainer>
         <OtherWallet>Other wallet?</OtherWallet>
         <Button rightIcon={<ArrowRight />} onClick={onSubmit}>

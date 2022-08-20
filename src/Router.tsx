@@ -3,6 +3,7 @@ import LoginPage from '@pages/LoginPage';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import SignUpPage from '@pages/SignUpPage';
 import { AnimatePresence } from 'framer-motion';
+import FeedPage from '@pages/FeedPage';
 
 const Router = () => (
   <AnimatePresence>
@@ -11,6 +12,7 @@ const Router = () => (
         <Route element={<BaseLayout />}>
           <Route path="/" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/feed" element={<FeedPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

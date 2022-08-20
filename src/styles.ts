@@ -1,15 +1,13 @@
 import BgGradient from '@assets/images/bg_gradient.png';
 import { css } from '@emotion/react';
+import reset from 'emotion-reset';
 
 export const globalStyles = css`
+  ${reset};
   html {
     font-family: 'Inter', sans-serif;
     color: #ffffff;
     background-color: #1b191c;
-  }
-  body {
-    margin: 0;
-    padding: 0;
   }
   * {
     box-sizing: border-box;

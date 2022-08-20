@@ -18,16 +18,21 @@
     "@cosmjs/stargate": "^0.28.13",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
+    "date-fns": "^2.29.2",
+    "emotion-reset": "^3.0.1",
     "framer-motion": "^7.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.3.0"
+    "react-router-dom": "^6.3.0",
+    "wavesurfer.js": "^6.2.0"
   },
   "devDependencies": {
     "@keplr-wallet/types": "^0.10.17",
     "@svgr/cli": "^6.3.1",
+    "@types/date-fns": "^2.6.0",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
+    "@types/wavesurfer.js": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
     "@vitejs/plugin-react": "^2.0.1",

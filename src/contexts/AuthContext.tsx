@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { CHAIN_ID } from '@constants';
+import { CHAIN_ID, ENDPOINT, TESTNET_CHAIN_INFO } from '@constants';
 import { SigningStargateClient } from '@cosmjs/stargate';
 
 interface AuthenticatedAuthContextValues {
@@ -51,6 +51,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error('Keplr is not available');
     }
 
+    await window.keplr.experimentalSuggestChain(TESTNET_CHAIN_INFO);
+
     await window.keplr.enable(CHAIN_ID);
 
     const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
@@ -62,11 +64,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     cosmosClient.current = await SigningStargateClient.connectWithSigner(
-      'https://lcd-cosmoshub.keplr.app/rest',
+      ENDPOINT,
       offlineSigner
     );
     setAddress(accounts[0].address);
     setIsAuthenticated(true);
+    setIsAuthenticating(false);
   }, []);
 
   const values = useMemo(
