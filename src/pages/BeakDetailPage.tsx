@@ -8,6 +8,7 @@ import Tag from '@components/Tag';
 import getAvatarUrl from '@utils/getAvatarUrl';
 import SampleMp3 from '@assets/sample.mp3';
 import CommentList from '@components/CommentList';
+import TinyBeakCard from '@components/TinyBeakCard';
 
 const Container = styled.div`
   display: flex;
@@ -78,12 +79,39 @@ const MarginedBeakCard = styled(BeakCard)`
   margin: 10px;
 `;
 
+const UsedBeakCardListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const UsedBeakCardList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+`;
+
+const Name = styled.span`
+  font-size: 14px;
+  line-height: 17px;
+  margin-bottom: 8px;
+`;
+
 const BeakDetailPage = () => {
   return (
     <PageLayout title="A" isWide>
       <Container>
         <InnerContainer>
           <MarginedBeakCard variant="detail" url={SampleMp3} respectCount={1} />
+          <UsedBeakCardListContainer>
+            <Name>Used Beaks</Name>
+            <UsedBeakCardList>
+              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
+              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
+              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
+              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
+              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
+            </UsedBeakCardList>
+          </UsedBeakCardListContainer>
           <CommentList comments={[{ id: 'asd' }]} />
         </InnerContainer>
         <RightBoxContainer>
