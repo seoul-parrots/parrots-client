@@ -4,17 +4,24 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
-import { CHAIN_ID, ENDPOINT, TESTNET_CHAIN_INFO } from '@constants';
-import { SigningStargateClient } from '@cosmjs/stargate';
+import {
+  CHAIN_ID,
+  REST_ENDPOINT,
+  RPC_ENDPOINT,
+  TESTNET_CHAIN_INFO,
+} from '@constants';
+import { queryClient, txClient } from '@generated';
 
 interface AuthenticatedAuthContextValues {
   isAuthenticated: true;
   isAuthenticating: false;
-  client: SigningStargateClient;
+  txClient: Awaited<ReturnType<typeof txClient>>;
+  queryClient: Awaited<ReturnType<typeof queryClient>>;
   address: string;
   authenticate: () => Promise<void>;
 }
@@ -22,7 +29,8 @@ interface AuthenticatedAuthContextValues {
 interface UnauthenticatedAuthContextValues {
   isAuthenticated: false;
   isAuthenticating: boolean;
-  client: null;
+  txClient: null;
+  queryClient: null;
   address: null;
   authenticate: () => Promise<void>;
 }
@@ -33,35 +41,21 @@ export type AuthContextValues =
 
 export const AuthContext = createContext<AuthContextValues>({
   isAuthenticated: false,
-  isAuthenticating: false,
-  client: null,
+  isAuthenticating: true,
+  txClient: null,
+  queryClient: null,
   address: null,
   authenticate: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const cosmosClient = useRef<SigningStargateClient | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const txClientRef = useRef<Awaited<ReturnType<typeof txClient>> | null>(null);
+  const queryClientRef = useRef<Awaited<ReturnType<typeof queryClient>> | null>(
+    null
+  );
   const [address, setAddress] = useState<string | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      if (!window.keplr) {
-        throw new Error('Keplr is not available');
-      }
-
-      await window.keplr.experimentalSuggestChain(TESTNET_CHAIN_INFO);
-      await window.keplr.enable(CHAIN_ID);
-
-      const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
-
-      cosmosClient.current = await SigningStargateClient.connectWithSigner(
-        ENDPOINT,
-        offlineSigner
-      );
-    })();
-  }, []);
 
   const authenticate = useCallback(async () => {
     setIsAuthenticating(true);
@@ -69,6 +63,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!window.keplr) {
       throw new Error('Keplr is not available');
     }
+
+    await window.keplr.experimentalSuggestChain(TESTNET_CHAIN_INFO);
+    await window.keplr.enable(CHAIN_ID);
 
     const offlineSigner = window.keplr.getOfflineSigner(CHAIN_ID);
 
@@ -78,23 +75,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw new Error('No accounts found');
     }
 
-    cosmosClient.current = await SigningStargateClient.connectWithSigner(
-      ENDPOINT,
-      offlineSigner
-    );
+    txClientRef.current = await txClient(offlineSigner, {
+      addr: RPC_ENDPOINT,
+    });
+    queryClientRef.current = await queryClient({ addr: REST_ENDPOINT });
+
     setAddress(accounts[0].address);
     setIsAuthenticated(true);
     setIsAuthenticating(false);
   }, []);
+
+  useLayoutEffect(() => {
+    authenticate();
+  }, [authenticate]);
 
   const values = useMemo(
     () =>
       ({
         isAuthenticated,
         isAuthenticating,
-        authenticate,
         address,
-        client: cosmosClient.current,
+        txClient: txClientRef.current,
+        queryClient: queryClientRef.current,
+        authenticate,
       } as AuthContextValues),
     [address, authenticate, isAuthenticated, isAuthenticating]
   );

@@ -3,8 +3,9 @@ import { boxStyles, maskedText, focusTextStyles } from '@styles';
 import LogoSymbol from '@assets/images/logo_symbol.svg';
 import Button from '@components/Button';
 import { Keplr } from '@components/Icon';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import PageAnimation from '@components/layouts/PageAnimation';
+import { useAuth } from '@contexts/AuthContext';
 
 const Container = styled(PageAnimation)`
   display: flex;
@@ -58,6 +59,11 @@ const ConnectButton = styled(Button)`
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Navigate to="/signup" />;
+  }
 
   return (
     <Container>

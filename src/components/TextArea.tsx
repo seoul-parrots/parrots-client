@@ -30,7 +30,7 @@ const InnerContainer = styled.label`
   gap: 16px;
   flex: 1;
 
-  width: 560px;
+  width: 100%;
   height: 72px;
 
   background: #1b191c;

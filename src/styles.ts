@@ -14,6 +14,14 @@ export const globalStyles = css`
   * {
     box-sizing: border-box;
   }
+  a {
+    text-decoration: none;
+    color: #ffffff;
+  }
+  button {
+    outline: none;
+    cursor: pointer;
+  }
 `;
 
 export const focusTextStyles = css`

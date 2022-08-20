@@ -15,6 +15,8 @@
     "*.{js,jsx,ts,tsx}": "yarn lint --fix"
   },
   "dependencies": {
+    "@cosmjs/launchpad": "^0.27.1",
+    "@cosmjs/proto-signing": "^0.28.13",
     "@cosmjs/stargate": "^0.28.13",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",

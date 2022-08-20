@@ -6,6 +6,7 @@ import RoundButton from '@components/RoundButton';
 import Input from '@components/Input';
 import useInputProps from '@hooks/useInputProps';
 import TextArea from '@components/TextArea';
+import { useCallback } from 'react';
 
 const Container = styled.div`
   ${boxStyles};
@@ -67,6 +68,8 @@ const MyProfilePage = () => {
   const { value: displayName, onChange: onChangeDisplayName } =
     useInputProps('');
   const { value: bio, onChange: onChangeBio } = useInputProps('');
+
+  const handleClickSignout = useCallback(() => {}, []);
   return (
     <PageLayout title="Profile" isWide>
       <Container>
@@ -80,7 +83,7 @@ const MyProfilePage = () => {
               <span>12 Respects</span>
             </Summary>
           </InfoContainer>
-          <RoundButton>Sign out</RoundButton>
+          <RoundButton onClick={handleClickSignout}>Sign out</RoundButton>
         </Head>
         <Input
           label="Username"

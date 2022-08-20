@@ -1,17 +1,16 @@
 import Button from '@components/Button';
 import { ArrowRight } from '@components/Icon';
-import { memo } from 'react';
-import useInputProps from '@hooks/useInputProps';
+import { ChangeEvent, memo } from 'react';
 import TextArea from '@components/TextArea';
 import { Logo, Title, Box, BottomContainer } from './components';
 
 export interface ThirdStepProps {
   onSubmit: () => void;
+  bio: string;
+  onChangeBio: (event: ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-const ThirdStep = ({ onSubmit }: ThirdStepProps) => {
-  const { value, onChange } = useInputProps('');
-
+const ThirdStep = ({ onSubmit, bio, onChangeBio }: ThirdStepProps) => {
   return (
     <Box>
       <Logo />
@@ -23,13 +22,13 @@ const ThirdStep = ({ onSubmit }: ThirdStepProps) => {
       <TextArea
         label="About me"
         placeholder="Introduce yourself"
-        value={value}
-        onChange={onChange}
+        value={bio}
+        onChange={onChangeBio}
         height={246}
       />
       <BottomContainer>
         <div />
-        <Button rightIcon={<ArrowRight />} onClick={onSubmit} disabled={!value}>
+        <Button rightIcon={<ArrowRight />} onClick={onSubmit} disabled={!bio}>
           Start Parrots
         </Button>
       </BottomContainer>

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useAuth } from '@contexts/AuthContext';
+import { useAuth, useAuthenticatedAuth } from '@contexts/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useCallback, useLayoutEffect } from 'react';
 import FirstStep from '@components/signup/FirstStep';
@@ -8,6 +8,9 @@ import StepContainer from '@components/StepContainer';
 import SecondStep from '@components/signup/SecondStep';
 import ThirdStep from '@components/signup/ThirdStep';
 import PageAnimation from '@components/layouts/PageAnimation';
+import { Api } from '@generated/rest';
+import useInputProps from '@hooks/useInputProps';
+import { css, Global } from '@emotion/react';
 
 const Container = styled(PageAnimation)`
   display: flex;
@@ -23,40 +26,61 @@ const StepListContainer = styled.div`
 `;
 
 const SignUpPage = () => {
-  const { isAuthenticating, isAuthenticated, authenticate } = useAuth();
   const navigate = useNavigate();
   const { x, next, prev, containerRef, index } = useSteps(3);
+  const { address, txClient } = useAuthenticatedAuth();
+  const { value: username, onChange: onChangeUsername } = useInputProps('');
+  const { value: displayName, onChange: onChangeDisplayName } =
+    useInputProps('');
+  const { value: bio, onChange: onChangeBio } = useInputProps('');
 
-  useLayoutEffect(() => {
-    authenticate().catch((error) => {
-      alert(error);
-      navigate('/');
-    });
-  }, [authenticate, navigate]);
+  useLayoutEffect(() => {}, []);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
+    const response = await txClient.signAndBroadcast([
+      txClient.msgSetProfile({
+        creator: address,
+        username,
+        displayName,
+        description: bio,
+      }),
+    ]);
+
+    if (response.code !== 0) {
+      alert('Error occurred during signup. Please contact support.');
+      return;
+    }
     navigate('/feed');
-  }, [navigate]);
-
-  if (isAuthenticating) {
-    return <>Loading...</>;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/" />;
-  }
+  }, [address, bio, displayName, navigate, txClient, username]);
 
   return (
     <Container>
+      <Global
+        styles={css`
+          html {
+            overflow-x: hidden;
+          }
+        `}
+      />
       <StepListContainer ref={containerRef}>
         <StepContainer x={x} index={0} isEnabled={index === 0}>
           <FirstStep onSubmit={next} />
         </StepContainer>
         <StepContainer x={x} index={1} isEnabled={index === 1}>
-          <SecondStep onSubmit={next} />
+          <SecondStep
+            onSubmit={next}
+            username={username}
+            onChangeUsername={onChangeUsername}
+            displayName={displayName}
+            onChangeDisplayName={onChangeDisplayName}
+          />
         </StepContainer>
         <StepContainer x={x} index={2} isEnabled={index === 2}>
-          <ThirdStep onSubmit={handleSubmit} />
+          <ThirdStep
+            bio={bio}
+            onChangeBio={onChangeBio}
+            onSubmit={handleSubmit}
+          />
         </StepContainer>
       </StepListContainer>
     </Container>

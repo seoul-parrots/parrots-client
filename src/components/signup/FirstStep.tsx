@@ -75,7 +75,7 @@ const FirstStep = ({ onSubmit }: FirstStepProps) => {
       <Wallet>
         <Avatar src={getAvatarUrl(address)} />
         <WalletInfo>
-          <WalletName>YEAH</WalletName>
+          <WalletName>Keplr Wallet</WalletName>
           <WalletAddress>{address}</WalletAddress>
         </WalletInfo>
       </Wallet>
