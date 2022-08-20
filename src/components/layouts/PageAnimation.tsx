@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { HTMLMotionProps, motion } from 'framer-motion';
 import { HTMLAttributes, ReactNode } from 'react';
 
 const pageVariants = {
@@ -13,7 +13,7 @@ const pageVariants = {
   },
 };
 
-interface PageAnimationProps extends HTMLAttributes<HTMLDivElement> {
+interface PageAnimationProps extends HTMLMotionProps<'div'> {
   children: ReactNode;
 }
 
