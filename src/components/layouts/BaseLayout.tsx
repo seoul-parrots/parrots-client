@@ -73,7 +73,7 @@ const BaseLayout = () => {
   return (
     <Root>
       <Header isSignedIn={isAuthenticated}>
-        <Link to="/">
+        <Link to="/feed">
           <Logo src={LogoTypo} alt="Parrots" />
         </Link>
         {isAuthenticated && (
