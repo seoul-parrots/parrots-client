@@ -9,6 +9,7 @@ import getAvatarUrl from '@utils/getAvatarUrl';
 import SampleMp3 from '@assets/sample.mp3';
 import CommentList from '@components/CommentList';
 import TinyBeakCard from '@components/TinyBeakCard';
+import { Download, Respect } from '@components/Icon';
 
 const Container = styled.div`
   display: flex;
@@ -96,6 +97,24 @@ const Name = styled.span`
   margin-bottom: 8px;
 `;
 
+const Action = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 24px;
+  gap: 16px;
+
+  background: #1b191c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+
+  cursor: pointer;
+`;
+
+const ActionText = styled.span`
+  font-size: 18px;
+  line-height: 22px;
+`;
+
 const BeakDetailPage = () => {
   return (
     <PageLayout title="A" isWide>
@@ -116,7 +135,16 @@ const BeakDetailPage = () => {
         </InnerContainer>
         <RightBoxContainer>
           <RightBox>
-            <RightBoxItem title="Actions">a</RightBoxItem>
+            <RightBoxItem title="Actions" isVertical>
+              <Action>
+                <Download size={28} />
+                <ActionText>Download</ActionText>
+              </Action>
+              <Action>
+                <Respect size={28} />
+                <ActionText>Show respect</ActionText>
+              </Action>
+            </RightBoxItem>
           </RightBox>
           <DetailBox>
             <RightBoxItem title="Description">

@@ -269,12 +269,17 @@ const UploadPage = () => {
               </div>
             </Box>
           )}
-          <Box style={{ gap: 24 }}>
-            <Input label="Title" placeholder="My awesome beak" />
-            <Input label="Tags" placeholder="#Guitar, #Punk, #OtherTag" />
-            <TextArea label="Description" placeholder="Description for beak" />
-            <SubmitButton>Submit</SubmitButton>
-          </Box>
+          {isCompletedLicense && (
+            <Box style={{ gap: 24 }}>
+              <Input label="Title" placeholder="My awesome beak" />
+              <Input label="Tags" placeholder="#Guitar, #Punk, #OtherTag" />
+              <TextArea
+                label="Description"
+                placeholder="Description for beak"
+              />
+              <SubmitButton>Submit</SubmitButton>
+            </Box>
+          )}
         </>
       )}
     </PageLayout>
