@@ -59,11 +59,6 @@ const ConnectButton = styled(Button)`
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-
-  if (isAuthenticated) {
-    return <Navigate to="/signup" />;
-  }
 
   return (
     <Container>

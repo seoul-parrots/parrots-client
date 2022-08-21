@@ -312,12 +312,29 @@ const UploadPage = () => {
                 }}
               >
                 <LicenseName>{license.toUpperCase()}</LicenseName>
-                <a
-                  href={`https://creativecommons.org/licenses/${license}/4.0/`}
-                  style={{ textDecoration: 'underline', opacity: 0.5 }}
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                  }}
                 >
-                  About this license
-                </a>
+                  <div
+                    onClick={() => {
+                      setLicense('');
+                      setIsCompletedLicense(false);
+                    }}
+                    style={{ textDecoration: 'underline', opacity: 0.5 }}
+                  >
+                    Select another license
+                  </div>
+                  <a
+                    href={`https://creativecommons.org/licenses/${license}/4.0/`}
+                    style={{ textDecoration: 'underline', opacity: 0.5 }}
+                  >
+                    About this license
+                  </a>
+                </div>
               </div>
             </Box>
           )}
