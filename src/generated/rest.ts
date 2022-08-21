@@ -25,6 +25,22 @@ export interface ParrotsBeak {
   tags?: string[];
 }
 
+export interface ParrotsComment {
+  /** @format uint64 */
+  id?: string;
+  creator?: string;
+  username?: string;
+  comment?: string;
+
+  /** @format uint64 */
+  timestamp?: string;
+
+  /** @format uint64 */
+  beak_id?: string;
+}
+
+export type ParrotsMsgCreateCommentResponse = object;
+
 export type ParrotsMsgSendRespectResponse = object;
 
 export interface ParrotsMsgSetProfileResponse {
@@ -104,6 +120,21 @@ export interface ParrotsQueryGetBeaksByTagResponse {
 export interface ParrotsQueryGetBeaksCountResponse {
   /** @format uint64 */
   count?: string;
+}
+
+export interface ParrotsQueryGetCommentsByBeakIdResponse {
+  comments?: ParrotsComment[];
+
+  /**
+   * PageResponse is to be embedded in gRPC response messages where the
+   * corresponding request message has used PageRequest.
+   *
+   *  message SomeResponse {
+   *          repeated Bar results = 1;
+   *          PageResponse page = 2;
+   *  }
+   */
+  pagination?: V1Beta1PageResponse;
 }
 
 export interface ParrotsQueryGetProfileByCreatorResponse {
@@ -540,6 +571,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     this.request<ParrotsQueryGetBeaksCountResponse, RpcStatus>({
       path: `/parrots/parrots/get_beaks_count`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+
+  /**
+   * No description
+   *
+   * @tags Query
+   * @name QueryGetCommentsByBeakId
+   * @summary Queries a list of GetCommentsByBeakId items.
+   * @request GET:/parrots/parrots/get_comments_by_beak_id
+   */
+  queryGetCommentsByBeakId = (
+    query?: { beakId?: string; "pagination.next_key"?: string; "pagination.total"?: string },
+    params: RequestParams = {},
+  ) =>
+    this.request<ParrotsQueryGetCommentsByBeakIdResponse, RpcStatus>({
+      path: `/parrots/parrots/get_comments_by_beak_id`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

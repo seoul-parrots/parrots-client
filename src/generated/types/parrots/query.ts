@@ -6,7 +6,7 @@ import {
   PageRequest,
   PageResponse,
 } from "../cosmos/base/query/v1beta1/pagination";
-import { Profile, Beak } from "../parrots/models";
+import { Profile, Beak, Comment } from "../parrots/models";
 
 export const protobufPackage = "parrots.parrots";
 
@@ -108,6 +108,16 @@ export interface QueryGetProfileByCreatorRequest {
 
 export interface QueryGetProfileByCreatorResponse {
   profile: Profile | undefined;
+}
+
+export interface QueryGetCommentsByBeakIdRequest {
+  beakId: number;
+  pagination: PageResponse | undefined;
+}
+
+export interface QueryGetCommentsByBeakIdResponse {
+  comments: Comment[];
+  pagination: PageResponse | undefined;
 }
 
 const baseQueryParamsRequest: object = {};
@@ -1879,6 +1889,199 @@ export const QueryGetProfileByCreatorResponse = {
   },
 };
 
+const baseQueryGetCommentsByBeakIdRequest: object = { beakId: 0 };
+
+export const QueryGetCommentsByBeakIdRequest = {
+  encode(
+    message: QueryGetCommentsByBeakIdRequest,
+    writer: Writer = Writer.create()
+  ): Writer {
+    if (message.beakId !== 0) {
+      writer.uint32(8).uint64(message.beakId);
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetCommentsByBeakIdRequest {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetCommentsByBeakIdRequest,
+    } as QueryGetCommentsByBeakIdRequest;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.beakId = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetCommentsByBeakIdRequest {
+    const message = {
+      ...baseQueryGetCommentsByBeakIdRequest,
+    } as QueryGetCommentsByBeakIdRequest;
+    if (object.beakId !== undefined && object.beakId !== null) {
+      message.beakId = Number(object.beakId);
+    } else {
+      message.beakId = 0;
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetCommentsByBeakIdRequest): unknown {
+    const obj: any = {};
+    message.beakId !== undefined && (obj.beakId = message.beakId);
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetCommentsByBeakIdRequest>
+  ): QueryGetCommentsByBeakIdRequest {
+    const message = {
+      ...baseQueryGetCommentsByBeakIdRequest,
+    } as QueryGetCommentsByBeakIdRequest;
+    if (object.beakId !== undefined && object.beakId !== null) {
+      message.beakId = object.beakId;
+    } else {
+      message.beakId = 0;
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
+const baseQueryGetCommentsByBeakIdResponse: object = {};
+
+export const QueryGetCommentsByBeakIdResponse = {
+  encode(
+    message: QueryGetCommentsByBeakIdResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    for (const v of message.comments) {
+      Comment.encode(v!, writer.uint32(10).fork()).ldelim();
+    }
+    if (message.pagination !== undefined) {
+      PageResponse.encode(
+        message.pagination,
+        writer.uint32(18).fork()
+      ).ldelim();
+    }
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): QueryGetCommentsByBeakIdResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseQueryGetCommentsByBeakIdResponse,
+    } as QueryGetCommentsByBeakIdResponse;
+    message.comments = [];
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.comments.push(Comment.decode(reader, reader.uint32()));
+          break;
+        case 2:
+          message.pagination = PageResponse.decode(reader, reader.uint32());
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): QueryGetCommentsByBeakIdResponse {
+    const message = {
+      ...baseQueryGetCommentsByBeakIdResponse,
+    } as QueryGetCommentsByBeakIdResponse;
+    message.comments = [];
+    if (object.comments !== undefined && object.comments !== null) {
+      for (const e of object.comments) {
+        message.comments.push(Comment.fromJSON(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromJSON(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+
+  toJSON(message: QueryGetCommentsByBeakIdResponse): unknown {
+    const obj: any = {};
+    if (message.comments) {
+      obj.comments = message.comments.map((e) =>
+        e ? Comment.toJSON(e) : undefined
+      );
+    } else {
+      obj.comments = [];
+    }
+    message.pagination !== undefined &&
+      (obj.pagination = message.pagination
+        ? PageResponse.toJSON(message.pagination)
+        : undefined);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<QueryGetCommentsByBeakIdResponse>
+  ): QueryGetCommentsByBeakIdResponse {
+    const message = {
+      ...baseQueryGetCommentsByBeakIdResponse,
+    } as QueryGetCommentsByBeakIdResponse;
+    message.comments = [];
+    if (object.comments !== undefined && object.comments !== null) {
+      for (const e of object.comments) {
+        message.comments.push(Comment.fromPartial(e));
+      }
+    }
+    if (object.pagination !== undefined && object.pagination !== null) {
+      message.pagination = PageResponse.fromPartial(object.pagination);
+    } else {
+      message.pagination = undefined;
+    }
+    return message;
+  },
+};
+
 /** Query defines the gRPC querier service. */
 export interface Query {
   /** Parameters queries the parameters of the module. */
@@ -1925,6 +2128,10 @@ export interface Query {
   GetProfileByCreator(
     request: QueryGetProfileByCreatorRequest
   ): Promise<QueryGetProfileByCreatorResponse>;
+  /** Queries a list of GetCommentsByBeakId items. */
+  GetCommentsByBeakId(
+    request: QueryGetCommentsByBeakIdRequest
+  ): Promise<QueryGetCommentsByBeakIdResponse>;
 }
 
 export class QueryClientImpl implements Query {
@@ -2089,6 +2296,20 @@ export class QueryClientImpl implements Query {
     );
     return promise.then((data) =>
       QueryGetProfileByCreatorResponse.decode(new Reader(data))
+    );
+  }
+
+  GetCommentsByBeakId(
+    request: QueryGetCommentsByBeakIdRequest
+  ): Promise<QueryGetCommentsByBeakIdResponse> {
+    const data = QueryGetCommentsByBeakIdRequest.encode(request).finish();
+    const promise = this.rpc.request(
+      "parrots.parrots.Query",
+      "GetCommentsByBeakId",
+      data
+    );
+    return promise.then((data) =>
+      QueryGetCommentsByBeakIdResponse.decode(new Reader(data))
     );
   }
 }

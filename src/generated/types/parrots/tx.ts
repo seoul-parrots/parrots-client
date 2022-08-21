@@ -37,6 +37,16 @@ export interface MsgSendRespect {
 
 export interface MsgSendRespectResponse {}
 
+export interface MsgCreateComment {
+  creator: string;
+  username: string;
+  comment: string;
+  timestamp: number;
+  beakId: number;
+}
+
+export interface MsgCreateCommentResponse {}
+
 const baseMsgSetProfile: object = {
   creator: "",
   username: "",
@@ -594,12 +604,194 @@ export const MsgSendRespectResponse = {
   },
 };
 
+const baseMsgCreateComment: object = {
+  creator: "",
+  username: "",
+  comment: "",
+  timestamp: 0,
+  beakId: 0,
+};
+
+export const MsgCreateComment = {
+  encode(message: MsgCreateComment, writer: Writer = Writer.create()): Writer {
+    if (message.creator !== "") {
+      writer.uint32(10).string(message.creator);
+    }
+    if (message.username !== "") {
+      writer.uint32(18).string(message.username);
+    }
+    if (message.comment !== "") {
+      writer.uint32(26).string(message.comment);
+    }
+    if (message.timestamp !== 0) {
+      writer.uint32(32).uint64(message.timestamp);
+    }
+    if (message.beakId !== 0) {
+      writer.uint32(40).uint64(message.beakId);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): MsgCreateComment {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseMsgCreateComment } as MsgCreateComment;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.creator = reader.string();
+          break;
+        case 2:
+          message.username = reader.string();
+          break;
+        case 3:
+          message.comment = reader.string();
+          break;
+        case 4:
+          message.timestamp = longToNumber(reader.uint64() as Long);
+          break;
+        case 5:
+          message.beakId = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): MsgCreateComment {
+    const message = { ...baseMsgCreateComment } as MsgCreateComment;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.username !== undefined && object.username !== null) {
+      message.username = String(object.username);
+    } else {
+      message.username = "";
+    }
+    if (object.comment !== undefined && object.comment !== null) {
+      message.comment = String(object.comment);
+    } else {
+      message.comment = "";
+    }
+    if (object.timestamp !== undefined && object.timestamp !== null) {
+      message.timestamp = Number(object.timestamp);
+    } else {
+      message.timestamp = 0;
+    }
+    if (object.beakId !== undefined && object.beakId !== null) {
+      message.beakId = Number(object.beakId);
+    } else {
+      message.beakId = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: MsgCreateComment): unknown {
+    const obj: any = {};
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.username !== undefined && (obj.username = message.username);
+    message.comment !== undefined && (obj.comment = message.comment);
+    message.timestamp !== undefined && (obj.timestamp = message.timestamp);
+    message.beakId !== undefined && (obj.beakId = message.beakId);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<MsgCreateComment>): MsgCreateComment {
+    const message = { ...baseMsgCreateComment } as MsgCreateComment;
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.username !== undefined && object.username !== null) {
+      message.username = object.username;
+    } else {
+      message.username = "";
+    }
+    if (object.comment !== undefined && object.comment !== null) {
+      message.comment = object.comment;
+    } else {
+      message.comment = "";
+    }
+    if (object.timestamp !== undefined && object.timestamp !== null) {
+      message.timestamp = object.timestamp;
+    } else {
+      message.timestamp = 0;
+    }
+    if (object.beakId !== undefined && object.beakId !== null) {
+      message.beakId = object.beakId;
+    } else {
+      message.beakId = 0;
+    }
+    return message;
+  },
+};
+
+const baseMsgCreateCommentResponse: object = {};
+
+export const MsgCreateCommentResponse = {
+  encode(
+    _: MsgCreateCommentResponse,
+    writer: Writer = Writer.create()
+  ): Writer {
+    return writer;
+  },
+
+  decode(
+    input: Reader | Uint8Array,
+    length?: number
+  ): MsgCreateCommentResponse {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = {
+      ...baseMsgCreateCommentResponse,
+    } as MsgCreateCommentResponse;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(_: any): MsgCreateCommentResponse {
+    const message = {
+      ...baseMsgCreateCommentResponse,
+    } as MsgCreateCommentResponse;
+    return message;
+  },
+
+  toJSON(_: MsgCreateCommentResponse): unknown {
+    const obj: any = {};
+    return obj;
+  },
+
+  fromPartial(
+    _: DeepPartial<MsgCreateCommentResponse>
+  ): MsgCreateCommentResponse {
+    const message = {
+      ...baseMsgCreateCommentResponse,
+    } as MsgCreateCommentResponse;
+    return message;
+  },
+};
+
 /** Msg defines the Msg service. */
 export interface Msg {
   SetProfile(request: MsgSetProfile): Promise<MsgSetProfileResponse>;
   UploadBeak(request: MsgUploadBeak): Promise<MsgUploadBeakResponse>;
-  /** this line is used by starport scaffolding # proto/tx/rpc */
   SendRespect(request: MsgSendRespect): Promise<MsgSendRespectResponse>;
+  /** this line is used by starport scaffolding # proto/tx/rpc */
+  CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse>;
 }
 
 export class MsgClientImpl implements Msg {
@@ -632,6 +824,18 @@ export class MsgClientImpl implements Msg {
     );
     return promise.then((data) =>
       MsgSendRespectResponse.decode(new Reader(data))
+    );
+  }
+
+  CreateComment(request: MsgCreateComment): Promise<MsgCreateCommentResponse> {
+    const data = MsgCreateComment.encode(request).finish();
+    const promise = this.rpc.request(
+      "parrots.parrots.Msg",
+      "CreateComment",
+      data
+    );
+    return promise.then((data) =>
+      MsgCreateCommentResponse.decode(new Reader(data))
     );
   }
 }

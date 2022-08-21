@@ -26,6 +26,15 @@ export interface Beak {
   tags: string[];
 }
 
+export interface Comment {
+  id: number;
+  creator: string;
+  username: string;
+  comment: string;
+  timestamp: number;
+  beak_id: number;
+}
+
 const baseProfile: object = {
   id: 0,
   creator: "",
@@ -439,6 +448,153 @@ export const Beak = {
       for (const e of object.tags) {
         message.tags.push(e);
       }
+    }
+    return message;
+  },
+};
+
+const baseComment: object = {
+  id: 0,
+  creator: "",
+  username: "",
+  comment: "",
+  timestamp: 0,
+  beak_id: 0,
+};
+
+export const Comment = {
+  encode(message: Comment, writer: Writer = Writer.create()): Writer {
+    if (message.id !== 0) {
+      writer.uint32(8).uint64(message.id);
+    }
+    if (message.creator !== "") {
+      writer.uint32(18).string(message.creator);
+    }
+    if (message.username !== "") {
+      writer.uint32(26).string(message.username);
+    }
+    if (message.comment !== "") {
+      writer.uint32(34).string(message.comment);
+    }
+    if (message.timestamp !== 0) {
+      writer.uint32(40).uint64(message.timestamp);
+    }
+    if (message.beak_id !== 0) {
+      writer.uint32(48).uint64(message.beak_id);
+    }
+    return writer;
+  },
+
+  decode(input: Reader | Uint8Array, length?: number): Comment {
+    const reader = input instanceof Uint8Array ? new Reader(input) : input;
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = { ...baseComment } as Comment;
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.id = longToNumber(reader.uint64() as Long);
+          break;
+        case 2:
+          message.creator = reader.string();
+          break;
+        case 3:
+          message.username = reader.string();
+          break;
+        case 4:
+          message.comment = reader.string();
+          break;
+        case 5:
+          message.timestamp = longToNumber(reader.uint64() as Long);
+          break;
+        case 6:
+          message.beak_id = longToNumber(reader.uint64() as Long);
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): Comment {
+    const message = { ...baseComment } as Comment;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = Number(object.id);
+    } else {
+      message.id = 0;
+    }
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = String(object.creator);
+    } else {
+      message.creator = "";
+    }
+    if (object.username !== undefined && object.username !== null) {
+      message.username = String(object.username);
+    } else {
+      message.username = "";
+    }
+    if (object.comment !== undefined && object.comment !== null) {
+      message.comment = String(object.comment);
+    } else {
+      message.comment = "";
+    }
+    if (object.timestamp !== undefined && object.timestamp !== null) {
+      message.timestamp = Number(object.timestamp);
+    } else {
+      message.timestamp = 0;
+    }
+    if (object.beak_id !== undefined && object.beak_id !== null) {
+      message.beak_id = Number(object.beak_id);
+    } else {
+      message.beak_id = 0;
+    }
+    return message;
+  },
+
+  toJSON(message: Comment): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    message.creator !== undefined && (obj.creator = message.creator);
+    message.username !== undefined && (obj.username = message.username);
+    message.comment !== undefined && (obj.comment = message.comment);
+    message.timestamp !== undefined && (obj.timestamp = message.timestamp);
+    message.beak_id !== undefined && (obj.beak_id = message.beak_id);
+    return obj;
+  },
+
+  fromPartial(object: DeepPartial<Comment>): Comment {
+    const message = { ...baseComment } as Comment;
+    if (object.id !== undefined && object.id !== null) {
+      message.id = object.id;
+    } else {
+      message.id = 0;
+    }
+    if (object.creator !== undefined && object.creator !== null) {
+      message.creator = object.creator;
+    } else {
+      message.creator = "";
+    }
+    if (object.username !== undefined && object.username !== null) {
+      message.username = object.username;
+    } else {
+      message.username = "";
+    }
+    if (object.comment !== undefined && object.comment !== null) {
+      message.comment = object.comment;
+    } else {
+      message.comment = "";
+    }
+    if (object.timestamp !== undefined && object.timestamp !== null) {
+      message.timestamp = object.timestamp;
+    } else {
+      message.timestamp = 0;
+    }
+    if (object.beak_id !== undefined && object.beak_id !== null) {
+      message.beak_id = object.beak_id;
+    } else {
+      message.beak_id = 0;
     }
     return message;
   },
