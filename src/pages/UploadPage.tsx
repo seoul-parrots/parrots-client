@@ -13,6 +13,7 @@ import { FILE_API_ENDPOINT } from '@constants';
 import { useAuthenticatedAuth } from '@contexts/AuthContext';
 import useInputProps from '@hooks/useInputProps';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 const UploadBox = styled.div`
   ${boxStyles};
@@ -160,47 +161,58 @@ const UploadPage = () => {
     useInputProps('');
   const navigate = useNavigate();
 
-  const handleSubmit = useCallback(async () => {
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('file', file);
+  const handleSubmit = useCallback(
+    () =>
+      toast.promise(
+        (async () => {
+          if (!file) return;
+          const formData = new FormData();
 
-    const response = await fetch(`${FILE_API_ENDPOINT}/upload`, {
-      body: formData,
-      method: 'post',
-    });
+          formData.append('file', file);
 
-    const { index } = await response.json();
-    const uploadResponse = await txClient.signAndBroadcast([
-      txClient.msgUploadBeak({
-        creator: address,
-        fileIndex: index,
-        name: nameValue,
-        description: descriptionValue,
-        creatorUsername: profile.username!,
-        creatorDisplayName: profile.display_name!,
-        tags: tagsValue.split(',').map((tag) => tag.trim().replace(/^#/g, '')),
-        license,
-        linkedBeaks: [],
-      }),
-    ]);
+          const response = await fetch(`${FILE_API_ENDPOINT}/upload`, {
+            body: formData,
+            method: 'post',
+          });
 
-    if (uploadResponse.code !== 0) {
-      alert('Error occurred during upload Beak. Please try again.');
-    }
-    navigate('/feed');
-  }, [
-    address,
-    descriptionValue,
-    file,
-    license,
-    nameValue,
-    navigate,
-    profile.display_name,
-    profile.username,
-    tagsValue,
-    txClient,
-  ]);
+          const { index } = await response.json();
+          const uploadResponse = await txClient.signAndBroadcast([
+            txClient.msgUploadBeak({
+              creator: address,
+              fileIndex: index,
+              name: nameValue,
+              description: descriptionValue,
+              creatorUsername: profile.username!,
+              creatorDisplayName: profile.display_name!,
+              tags: tagsValue
+                .split(',')
+                .map((tag) => tag.trim().replace(/^#/g, '')),
+              license,
+              linkedBeaks: [],
+            }),
+          ]);
+
+          if (uploadResponse.code !== 0) {
+            alert('Error occurred during upload Beak. Please try again.');
+          }
+          navigate('/feed');
+        })(),
+        { loading: 'Uploading...', success: 'Upload complete!', error: 'Error' }
+      ),
+    [
+      address,
+      descriptionValue,
+      file,
+      license,
+      nameValue,
+      navigate,
+      profile.display_name,
+      profile.username,
+      tagsValue,
+      txClient,
+    ]
+  );
+
   return (
     <PageLayout title="Upload new beak">
       {!file ? (

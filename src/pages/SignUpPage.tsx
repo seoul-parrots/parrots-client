@@ -10,6 +10,7 @@ import ThirdStep from '@components/signup/ThirdStep';
 import PageAnimation from '@components/layouts/PageAnimation';
 import useInputProps from '@hooks/useInputProps';
 import { css, Global } from '@emotion/react';
+import toast from 'react-hot-toast';
 
 const Container = styled(PageAnimation)`
   display: flex;
@@ -39,25 +40,36 @@ const SignUpPage = () => {
     }
   }, [navigate, profile]);
 
-  const handleSubmit = useCallback(async () => {
-    const response = await txClient.signAndBroadcast([
-      txClient.msgSetProfile({
-        creator: address,
-        username,
-        displayName,
-        description: bio,
-      }),
-    ]);
+  const handleSubmit = useCallback(
+    () =>
+      toast.promise(
+        (async () => {
+          const response = await txClient.signAndBroadcast([
+            txClient.msgSetProfile({
+              creator: address,
+              username,
+              displayName,
+              description: bio,
+            }),
+          ]);
 
-    if (response.code !== 0) {
-      alert('Error occurred during signup. Please contact support.');
-      return;
-    }
+          if (response.code !== 0) {
+            alert('Error occurred during signup. Please contact support.');
+            return;
+          }
 
-    await loadProfile();
+          await loadProfile();
 
-    navigate('/feed');
-  }, [address, bio, displayName, loadProfile, navigate, txClient, username]);
+          navigate('/feed');
+        })(),
+        {
+          loading: 'Signing up...',
+          success: 'Signup complete!',
+          error: 'Error',
+        }
+      ),
+    [address, bio, displayName, loadProfile, navigate, txClient, username]
+  );
 
   return (
     <Container>

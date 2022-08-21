@@ -103,6 +103,7 @@ const BaseLayout = () => {
   useEffect(() => {
     setIsShowProfilePopover(false);
   }, [location]);
+
   return (
     <Root>
       <Header isSignedIn={isAuthenticated}>

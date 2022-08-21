@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from '@contexts/AuthContext';
+import { AuthProvider, useAuth } from '@contexts/AuthContext';
 import { useLayoutEffect } from 'react';
 
 const SecureRoute = () => {

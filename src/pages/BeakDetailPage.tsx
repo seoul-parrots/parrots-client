@@ -14,6 +14,7 @@ import { useAuthenticatedAuth } from '@contexts/AuthContext';
 import { useParams } from 'react-router-dom';
 import getFileUrl from '@utils/getFileUrl';
 import WrappedTinyBeakCard from '@components/WrappedTinyBeakCard';
+import toast from 'react-hot-toast';
 
 const Container = styled.div`
   display: flex;
@@ -154,18 +155,27 @@ const BeakDetailPage = () => {
     })();
   }, [beak, queryClient]);
 
-  const handleClickRespect = useCallback(() => {
-    if (!beak) return;
-    (async () => {
-      await txClient.signAndBroadcast([
-        txClient.msgSendRespect({
-          creator: address,
-          beakId: Number(beak.id),
-        }),
-      ]);
-      loadBeak();
-    })();
-  }, [address, beak, loadBeak, txClient]);
+  const handleClickRespect = useCallback(
+    () =>
+      toast.promise(
+        (async () => {
+          if (!beak) return;
+          await txClient.signAndBroadcast([
+            txClient.msgSendRespect({
+              creator: address,
+              beakId: Number(beak.id),
+            }),
+          ]);
+          loadBeak();
+        })(),
+        {
+          success: 'Respect complete!',
+          loading: 'Showing respect...',
+          error: 'Error',
+        }
+      ),
+    [address, beak, loadBeak, txClient]
+  );
 
   if (!beak) return <>Loading...</>;
 
@@ -176,7 +186,7 @@ const BeakDetailPage = () => {
           <MarginedBeakCard
             variant="detail"
             url={getFileUrl(beak.file_index!)}
-            respectCount={1}
+            respectCount={Number(beak.respect_count)}
           />
           <UsedBeakCardListContainer>
             <Name>Used Beaks</Name>
