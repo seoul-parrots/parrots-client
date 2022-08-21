@@ -69,13 +69,13 @@ const MyProfilePage = () => {
   const navigate = useNavigate();
   const { address, txClient, loadProfile, profile } = useAuthenticatedAuth();
   const { value: username, onChange: onChangeUsername } = useInputProps(
-    profile.username ?? ''
+    profile?.username ?? ''
   );
   const { value: displayName, onChange: onChangeDisplayName } = useInputProps(
-    profile.display_name ?? ''
+    profile?.display_name ?? ''
   );
   const { value: bio, onChange: onChangeBio } = useInputProps(
-    profile.description ?? ''
+    profile?.description ?? ''
   );
 
   const handleSubmit = useCallback(async () => {
@@ -97,6 +97,10 @@ const MyProfilePage = () => {
 
     navigate('/feed');
   }, [address, bio, displayName, loadProfile, navigate, txClient, username]);
+
+  if (!profile) {
+    return null;
+  }
 
   return (
     <PageLayout title="Profile" isWide>
