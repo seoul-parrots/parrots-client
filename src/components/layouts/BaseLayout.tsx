@@ -69,7 +69,7 @@ const Avatar = styled.img`
 `;
 
 const BaseLayout = () => {
-  const { isAuthenticated, address } = useAuth();
+  const { isAuthenticated, address, profile } = useAuth();
   return (
     <Root>
       <Header isSignedIn={isAuthenticated}>
@@ -83,7 +83,7 @@ const BaseLayout = () => {
             </Link>
             <Link to="/my/profile">
               <Profile>
-                <span>@daewoon.kim</span>
+                <span>@{profile.username}</span>
                 <Avatar src={getAvatarUrl(address)} />
               </Profile>
             </Link>

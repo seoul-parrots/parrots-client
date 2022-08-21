@@ -16,6 +16,7 @@ import {
   TESTNET_CHAIN_INFO,
 } from '@constants';
 import { queryClient, txClient } from '@generated';
+import { ParrotsProfile } from '@generated/rest';
 
 interface AuthenticatedAuthContextValues {
   isAuthenticated: true;
@@ -24,6 +25,8 @@ interface AuthenticatedAuthContextValues {
   queryClient: Awaited<ReturnType<typeof queryClient>>;
   address: string;
   authenticate: () => Promise<void>;
+  profile: ParrotsProfile;
+  loadProfile: () => Promise<ParrotsProfile>;
 }
 
 interface UnauthenticatedAuthContextValues {
@@ -33,6 +36,8 @@ interface UnauthenticatedAuthContextValues {
   queryClient: null;
   address: null;
   authenticate: () => Promise<void>;
+  profile: null;
+  loadProfile: () => Promise<void>;
 }
 
 export type AuthContextValues =
@@ -46,6 +51,8 @@ export const AuthContext = createContext<AuthContextValues>({
   queryClient: null,
   address: null,
   authenticate: async () => {},
+  profile: null,
+  loadProfile: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -56,6 +63,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     null
   );
   const [address, setAddress] = useState<string | null>(null);
+  const [profile, setProfile] = useState<ParrotsProfile | null>(null);
+
+  const loadProfile = useCallback(async () => {
+    if (!address || !queryClientRef.current) return null;
+    const response = await queryClientRef.current.queryGetProfileByCreator({
+      creator: address,
+    });
+    if (!response.data.profile) {
+      throw new Error('No profile found');
+    }
+    setProfile(response.data.profile);
+    return response.data.profile;
+  }, [address]);
 
   const authenticate = useCallback(async () => {
     setIsAuthenticating(true);
@@ -80,10 +100,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
     queryClientRef.current = await queryClient({ addr: REST_ENDPOINT });
 
+    try {
+      await loadProfile();
+    } catch (error) {
+      console.error(error);
+    }
+
     setAddress(accounts[0].address);
     setIsAuthenticated(true);
     setIsAuthenticating(false);
-  }, []);
+  }, [loadProfile]);
 
   useLayoutEffect(() => {
     authenticate();
@@ -98,8 +124,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         txClient: txClientRef.current,
         queryClient: queryClientRef.current,
         authenticate,
+        profile,
+        loadProfile,
       } as AuthContextValues),
-    [address, authenticate, isAuthenticated, isAuthenticating]
+    [
+      address,
+      authenticate,
+      isAuthenticated,
+      isAuthenticating,
+      loadProfile,
+      profile,
+    ]
   );
 
   return <AuthContext.Provider value={values}>{children}</AuthContext.Provider>;

@@ -28,7 +28,7 @@ const StepListContainer = styled.div`
 const SignUpPage = () => {
   const navigate = useNavigate();
   const { x, next, prev, containerRef, index } = useSteps(3);
-  const { address, txClient } = useAuthenticatedAuth();
+  const { address, txClient, loadProfile } = useAuthenticatedAuth();
   const { value: username, onChange: onChangeUsername } = useInputProps('');
   const { value: displayName, onChange: onChangeDisplayName } =
     useInputProps('');
@@ -50,6 +50,9 @@ const SignUpPage = () => {
       alert('Error occurred during signup. Please contact support.');
       return;
     }
+
+    await loadProfile();
+
     navigate('/feed');
   }, [address, bio, displayName, navigate, txClient, username]);
 
