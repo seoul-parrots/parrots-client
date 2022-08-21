@@ -3,6 +3,8 @@ import { memo } from 'react';
 import getAvatarUrl from '@utils/getAvatarUrl';
 import BeakCard from '@components/BeakCard';
 import { formatDistanceToNow } from 'date-fns';
+import { ParrotsBeak } from '@generated/rest';
+import getFileUrl from '@utils/getFileUrl';
 
 const Container = styled.div`
   display: flex;
@@ -36,27 +38,15 @@ const CreatedAt = styled.span`
 `;
 
 export interface FeedItemProps {
-  address: string;
-  url: string;
-  respectCount: number;
-  title: string;
-  author: string;
-  createdAt: Date;
+  beak: ParrotsBeak;
 }
 
-const FeedItem = ({
-  address,
-  title,
-  author,
-  url,
-  respectCount,
-  createdAt,
-}: FeedItemProps) => {
-  const formattedCreatedAt = formatDistanceToNow(createdAt);
+const FeedItem = ({ beak }: FeedItemProps) => {
+  const formattedCreatedAt = formatDistanceToNow(new Date());
 
   return (
     <Container>
-      <Avatar src={getAvatarUrl(address)} />
+      <Avatar src={getAvatarUrl(beak.creator!)} />
       <InnerContainer>
         <Info>
           <span>
@@ -69,11 +59,11 @@ const FeedItem = ({
           </CreatedAt>
         </Info>
         <BeakCard
-          title={title}
-          author={author}
+          title={beak.name!}
+          authorUsername={beak.creator_username!}
           variant="feed"
-          url={url}
-          respectCount={respectCount}
+          url={getFileUrl(beak.file_index!)}
+          respectCount={beak.respect_count!}
         />
       </InnerContainer>
     </Container>

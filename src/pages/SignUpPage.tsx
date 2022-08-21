@@ -1,14 +1,13 @@
 import styled from '@emotion/styled';
-import { useAuth, useAuthenticatedAuth } from '@contexts/AuthContext';
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useCallback, useLayoutEffect } from 'react';
+import { useAuthenticatedAuth } from '@contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
 import FirstStep from '@components/signup/FirstStep';
 import useSteps from '@useSteps';
 import StepContainer from '@components/StepContainer';
 import SecondStep from '@components/signup/SecondStep';
 import ThirdStep from '@components/signup/ThirdStep';
 import PageAnimation from '@components/layouts/PageAnimation';
-import { Api } from '@generated/rest';
 import useInputProps from '@hooks/useInputProps';
 import { css, Global } from '@emotion/react';
 
@@ -28,13 +27,17 @@ const StepListContainer = styled.div`
 const SignUpPage = () => {
   const navigate = useNavigate();
   const { x, next, prev, containerRef, index } = useSteps(3);
-  const { address, txClient, loadProfile } = useAuthenticatedAuth();
+  const { address, txClient, loadProfile, profile } = useAuthenticatedAuth();
   const { value: username, onChange: onChangeUsername } = useInputProps('');
   const { value: displayName, onChange: onChangeDisplayName } =
     useInputProps('');
   const { value: bio, onChange: onChangeBio } = useInputProps('');
 
-  useLayoutEffect(() => {}, []);
+  useEffect(() => {
+    if (profile) {
+      navigate('/feed');
+    }
+  }, [navigate, profile]);
 
   const handleSubmit = useCallback(async () => {
     const response = await txClient.signAndBroadcast([
@@ -54,7 +57,7 @@ const SignUpPage = () => {
     await loadProfile();
 
     navigate('/feed');
-  }, [address, bio, displayName, navigate, txClient, username]);
+  }, [address, bio, displayName, loadProfile, navigate, txClient, username]);
 
   return (
     <Container>

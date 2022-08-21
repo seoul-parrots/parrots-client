@@ -1,15 +1,20 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '@contexts/AuthContext';
 import { useLayoutEffect } from 'react';
 
 const SecureRoute = () => {
-  const { isAuthenticated, isAuthenticating, authenticate } = useAuth();
+  const { isAuthenticated, isAuthenticating, authenticate, profile } =
+    useAuth();
+  const navigate = useNavigate();
 
   useLayoutEffect(() => {
     if (!isAuthenticating && !isAuthenticated) {
       authenticate();
     }
-  }, [authenticate, isAuthenticated, isAuthenticating]);
+    if (isAuthenticated && !profile) {
+      navigate('/signup');
+    }
+  }, [authenticate, isAuthenticated, isAuthenticating, navigate, profile]);
 
   if (isAuthenticating) {
     return <>Loading...</>;

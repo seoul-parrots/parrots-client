@@ -1,4 +1,3 @@
-import SampleMp3 from '@assets/sample.mp3';
 import PageLayout from '@components/layouts/PageLayout';
 import styled from '@emotion/styled';
 import FeedItem from '@components/FeedItem';
@@ -9,6 +8,10 @@ import { Search } from '@components/Icon';
 import RightBoxItem from '@components/RightBoxItem';
 import Tag from '@components/Tag';
 import { TAGS } from '@constants';
+import { useAuthenticatedAuth } from '@contexts/AuthContext';
+import useInputProps from '@hooks/useInputProps';
+import { useCallback, useLayoutEffect, useMemo, useState } from 'react';
+import { ParrotsBeak } from '@generated/rest';
 
 const Container = styled.div`
   display: flex;
@@ -27,42 +30,55 @@ const SearchBox = styled(RightBox)`
 `;
 
 const FeedPage = () => {
+  const { queryClient } = useAuthenticatedAuth();
+  const { value: searchValue, onChange: onChangeSearchValue } =
+    useInputProps('');
+  const [tag, setTag] = useState('');
+  const [beaks, setBeaks] = useState<ParrotsBeak[]>([]);
+
+  const loadFeedItems = useCallback(async () => {
+    if (tag) {
+      const { data } = await queryClient.queryGetBeaksByTag({
+        tag,
+      });
+      setBeaks(data.beaks ?? []);
+      return;
+    }
+
+    if (searchValue) {
+      const { data } = await queryClient.queryGetBeaksByNameSubstring({
+        nameSubstring: searchValue,
+      });
+      setBeaks(data.beaks ?? []);
+      return;
+    }
+
+    const { data } = await queryClient.queryGetAllBeaks();
+    setBeaks(data.beaks ?? []);
+  }, [queryClient, searchValue, tag]);
+
+  useLayoutEffect(() => {
+    loadFeedItems();
+  }, [loadFeedItems]);
+
+  const title = useMemo(() => {
+    if (tag) {
+      return `Search Result: ‘${tag}’`;
+    }
+
+    if (searchValue) {
+      return `Search Result: ‘${searchValue}’`;
+    }
+
+    return 'Explore';
+  }, [searchValue, tag]);
   return (
-    <PageLayout title="Explore" isWide>
+    <PageLayout title={title} isWide>
       <Container>
         <Feed>
-          <FeedItem
-            title="aaa"
-            author="aaaa"
-            url={SampleMp3}
-            respectCount={1}
-            address=""
-            createdAt={new Date(2022, 7, 20, 23, 0, 0)}
-          />
-          <FeedItem
-            title="aaa"
-            author="aaaa"
-            url={SampleMp3}
-            respectCount={1}
-            address=""
-            createdAt={new Date(2022, 7, 20, 23, 0, 0)}
-          />
-          <FeedItem
-            title="aaa"
-            author="aaaa"
-            url={SampleMp3}
-            respectCount={1}
-            address=""
-            createdAt={new Date(2022, 7, 20, 23, 0, 0)}
-          />
-          <FeedItem
-            title="aaa"
-            author="aaaa"
-            url={SampleMp3}
-            respectCount={1}
-            address=""
-            createdAt={new Date(2022, 7, 20, 23, 0, 0)}
-          />
+          {beaks.map((beak) => (
+            <FeedItem key={beak.id} beak={beak} />
+          ))}
         </Feed>
         <RightBoxContainer>
           <SearchBox>
@@ -70,11 +86,21 @@ const FeedPage = () => {
               leftIcon={<Search size={24} />}
               placeholder="Where’s your inspiration"
               variant="small"
+              value={searchValue}
+              onChange={onChangeSearchValue}
             />
             {TAGS.map(({ title, options }) => (
               <RightBoxItem key={title} title={title}>
                 {options.map((option) => (
-                  <Tag key={option}>{option}</Tag>
+                  <Tag
+                    key={option}
+                    onClick={() =>
+                      setTag((prev) => (prev === option ? '' : option))
+                    }
+                    isSelected={tag === option}
+                  >
+                    {option}
+                  </Tag>
                 ))}
               </RightBoxItem>
             ))}

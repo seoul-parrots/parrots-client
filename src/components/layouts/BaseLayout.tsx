@@ -76,7 +76,7 @@ const BaseLayout = () => {
         <Link to="/feed">
           <Logo src={LogoTypo} alt="Parrots" />
         </Link>
-        {isAuthenticated && (
+        {isAuthenticated && profile && (
           <RightContainer>
             <Link to="/upload">
               <UploadButton>Upload</UploadButton>

@@ -113,7 +113,7 @@ const RespectCount = styled.div`
 
 interface BaseBeakCardProps {
   title?: unknown;
-  author?: unknown;
+  authorUsername?: unknown;
   url: string;
   respectCount: number;
   commentCount?: unknown;
@@ -124,7 +124,7 @@ interface BaseBeakCardProps {
 interface FeedBeakCardProps extends BaseBeakCardProps {
   variant: 'feed';
   title: string;
-  author: string;
+  authorUsername: string;
 }
 
 interface DetailBeakCardProps extends BaseBeakCardProps {
@@ -147,7 +147,7 @@ export type BeakCardProps =
 const BeakCard = ({
   variant,
   title,
-  author,
+  authorUsername,
   url,
   respectCount,
   commentCount,
@@ -213,7 +213,7 @@ const BeakCard = ({
             <Title>{title}</Title>
             <AuthorOrCount isMine={variant === 'mine'}>
               {variant === 'feed'
-                ? author
+                ? authorUsername
                 : `${respectCount} Respects · ${commentCount} Comments`}
             </AuthorOrCount>
           </InfoContainer>
