@@ -6,11 +6,9 @@ import RightBoxItem from '@components/RightBoxItem';
 import styled from '@emotion/styled';
 import Tag from '@components/Tag';
 import getAvatarUrl from '@utils/getAvatarUrl';
-import SampleMp3 from '@assets/sample.mp3';
 import CommentList from '@components/CommentList';
-import TinyBeakCard from '@components/TinyBeakCard';
 import { Download, Respect } from '@components/Icon';
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useState } from 'react';
 import { ParrotsBeak, ParrotsComment, ParrotsProfile } from '@generated/rest';
 import { useAuthenticatedAuth } from '@contexts/AuthContext';
 import { useParams } from 'react-router-dom';
@@ -125,7 +123,7 @@ const BeakDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [beak, setBeak] = useState<ParrotsBeak>();
   const [comments, setComments] = useState<ParrotsComment[]>();
-  const { queryClient } = useAuthenticatedAuth();
+  const { address, queryClient, txClient } = useAuthenticatedAuth();
   const [authorProfile, setAuthorProfile] = useState<ParrotsProfile>();
 
   const loadComments = useCallback(async () => {
@@ -135,14 +133,16 @@ const BeakDetailPage = () => {
     setComments(data.comments);
   }, [id, queryClient]);
 
-  useLayoutEffect(() => {
+  const loadBeak = useCallback(async () => {
     if (!id) return;
-    (async () => {
-      const { data } = await queryClient.queryGetBeakById({ id });
-      setBeak(data.beak);
-      loadComments();
-    })();
-  }, [id, loadComments, queryClient]);
+    const { data } = await queryClient.queryGetBeakById({ id });
+    setBeak(data.beak);
+    loadComments();
+  }, [id, queryClient, loadComments]);
+
+  useLayoutEffect(() => {
+    loadBeak();
+  }, [loadBeak]);
 
   useLayoutEffect(() => {
     (async () => {
@@ -153,6 +153,19 @@ const BeakDetailPage = () => {
       setAuthorProfile(data.profile);
     })();
   }, [beak, queryClient]);
+
+  const handleClickRespect = useCallback(() => {
+    if (!beak) return;
+    (async () => {
+      await txClient.signAndBroadcast([
+        txClient.msgSendRespect({
+          creator: address,
+          beakId: Number(beak.id),
+        }),
+      ]);
+      loadBeak();
+    })();
+  }, [address, beak, loadBeak, txClient]);
 
   if (!beak) return <>Loading...</>;
 
@@ -182,11 +195,13 @@ const BeakDetailPage = () => {
         <RightBoxContainer>
           <RightBox>
             <RightBoxItem title="Actions" isVertical>
-              <Action>
+              <Action
+                onClick={() => window.open(getFileUrl(beak!.file_index!))}
+              >
                 <Download size={28} />
                 <ActionText>Download</ActionText>
               </Action>
-              <Action>
+              <Action onClick={handleClickRespect}>
                 <Respect size={28} />
                 <ActionText>Show respect</ActionText>
               </Action>
