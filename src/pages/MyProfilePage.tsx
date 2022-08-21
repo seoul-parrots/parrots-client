@@ -7,6 +7,8 @@ import Input from '@components/Input';
 import useInputProps from '@hooks/useInputProps';
 import TextArea from '@components/TextArea';
 import { useCallback } from 'react';
+import { useAuthenticatedAuth } from '@contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   ${boxStyles};
@@ -64,26 +66,50 @@ const SaveButton = styled(RoundButton)`
 `;
 
 const MyProfilePage = () => {
-  const { value: username, onChange: onChangeUsername } = useInputProps('');
-  const { value: displayName, onChange: onChangeDisplayName } =
-    useInputProps('');
-  const { value: bio, onChange: onChangeBio } = useInputProps('');
+  const navigate = useNavigate();
+  const { address, txClient, loadProfile, profile } = useAuthenticatedAuth();
+  const { value: username, onChange: onChangeUsername } = useInputProps(
+    profile.username ?? ''
+  );
+  const { value: displayName, onChange: onChangeDisplayName } = useInputProps(
+    profile.display_name ?? ''
+  );
+  const { value: bio, onChange: onChangeBio } = useInputProps(
+    profile.description ?? ''
+  );
 
-  const handleClickSignout = useCallback(() => {}, []);
+  const handleSubmit = useCallback(async () => {
+    const response = await txClient.signAndBroadcast([
+      txClient.msgSetProfile({
+        creator: address,
+        username,
+        displayName,
+        description: bio,
+      }),
+    ]);
+
+    if (response.code !== 0) {
+      alert('Error occurred during signup. Please contact support.');
+      return;
+    }
+
+    await loadProfile();
+
+    navigate('/feed');
+  }, [address, bio, displayName, loadProfile, navigate, txClient, username]);
+
   return (
     <PageLayout title="Profile" isWide>
       <Container>
         <Head>
-          <Avatar src={getAvatarUrl('asdasd')} />
+          <Avatar src={getAvatarUrl(address)} />
           <InfoContainer>
-            <DisplayName>asdasd</DisplayName>
+            <DisplayName>{profile.display_name}</DisplayName>
             <Summary>
-              <span>@daaa</span>
-              <span>12 Beaks</span>
-              <span>12 Respects</span>
+              <span>@{profile.username}</span>
+              <span>{profile.respectedBeaks?.length} Respects</span>
             </Summary>
           </InfoContainer>
-          <RoundButton onClick={handleClickSignout}>Sign out</RoundButton>
         </Head>
         <Input
           label="Username"
@@ -105,7 +131,7 @@ const MyProfilePage = () => {
           onChange={onChangeBio}
           height={246}
         />
-        <SaveButton>Save</SaveButton>
+        <SaveButton onClick={handleSubmit}>Save</SaveButton>
       </Container>
     </PageLayout>
   );

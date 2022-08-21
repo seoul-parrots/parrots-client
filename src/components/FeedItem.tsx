@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import getAvatarUrl from '@utils/getAvatarUrl';
 import BeakCard from '@components/BeakCard';
 import { formatDistanceToNow } from 'date-fns';
 import { ParrotsBeak } from '@generated/rest';
 import getFileUrl from '@utils/getFileUrl';
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
@@ -42,7 +43,14 @@ export interface FeedItemProps {
 }
 
 const FeedItem = ({ beak }: FeedItemProps) => {
-  const formattedCreatedAt = formatDistanceToNow(new Date());
+  const formattedCreatedAt = formatDistanceToNow(
+    new Date(Number(beak.created_at!))
+  );
+  const navigate = useNavigate();
+
+  const handleClick = useCallback(() => {
+    navigate(`/beaks/${beak.id}`);
+  }, [beak.id, navigate]);
 
   return (
     <Container>
@@ -50,7 +58,7 @@ const FeedItem = ({ beak }: FeedItemProps) => {
       <InnerContainer>
         <Info>
           <span>
-            <b>beomjun.gil</b> uploaded new beak
+            <b>{beak.creator_username}</b> uploaded new beak
           </span>
           <CreatedAt>
             {formattedCreatedAt.includes('less')
@@ -63,7 +71,8 @@ const FeedItem = ({ beak }: FeedItemProps) => {
           authorUsername={beak.creator_username!}
           variant="feed"
           url={getFileUrl(beak.file_index!)}
-          respectCount={beak.respect_count!}
+          respectCount={Number(beak.respect_count!)}
+          onClick={handleClick}
         />
       </InnerContainer>
     </Container>

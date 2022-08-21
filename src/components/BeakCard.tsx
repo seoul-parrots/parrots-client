@@ -191,6 +191,13 @@ const BeakCard = ({
     []
   );
 
+  useEffect(
+    () => () => {
+      waveSurferRef.current?.pause();
+    },
+    []
+  );
+
   const isDetail = variant === 'detail';
 
   return (

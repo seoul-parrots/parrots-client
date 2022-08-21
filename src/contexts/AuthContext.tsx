@@ -101,7 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     queryClientRef.current = await queryClient({ addr: REST_ENDPOINT });
 
     try {
-      await loadProfile();
+      setProfile(await loadProfile());
     } catch (error) {
       console.error(error);
     }

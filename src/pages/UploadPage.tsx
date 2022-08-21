@@ -9,6 +9,10 @@ import CategoryListItem from '@components/CategoryListItem';
 import RoundButton from '@components/RoundButton';
 import Input from '@components/Input';
 import TextArea from '@components/TextArea';
+import { FILE_API_ENDPOINT } from '@constants';
+import { useAuthenticatedAuth } from '@contexts/AuthContext';
+import useInputProps from '@hooks/useInputProps';
+import { useNavigate } from 'react-router-dom';
 
 const UploadBox = styled.div`
   ${boxStyles};
@@ -138,6 +142,7 @@ const SubmitButton = styled(RoundButton)`
 `;
 
 const UploadPage = () => {
+  const { txClient, address, profile } = useAuthenticatedAuth();
   const [file, setFile] = useState<File | null>(null);
   const [category, setCategory] = useState<string>('music');
   const [license, setLicense] = useState<string>('');
@@ -149,6 +154,53 @@ const UploadPage = () => {
     },
     []
   );
+  const { value: nameValue, onChange: onChangeName } = useInputProps('');
+  const { value: tagsValue, onChange: onChangeTags } = useInputProps('');
+  const { value: descriptionValue, onChange: onChangeDescription } =
+    useInputProps('');
+  const navigate = useNavigate();
+
+  const handleSubmit = useCallback(async () => {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch(`${FILE_API_ENDPOINT}/upload`, {
+      body: formData,
+      method: 'post',
+    });
+
+    const { index } = await response.json();
+    const uploadResponse = await txClient.signAndBroadcast([
+      txClient.msgUploadBeak({
+        creator: address,
+        fileIndex: index,
+        name: nameValue,
+        description: descriptionValue,
+        creatorUsername: profile.username!,
+        creatorDisplayName: profile.display_name!,
+        tags: tagsValue.split(',').map((tag) => tag.trim().replace(/^#/g, '')),
+        license,
+        linkedBeaks: [],
+      }),
+    ]);
+
+    if (uploadResponse.code !== 0) {
+      alert('Error occurred during upload Beak. Please try again.');
+    }
+    navigate('/feed');
+  }, [
+    address,
+    descriptionValue,
+    file,
+    license,
+    nameValue,
+    navigate,
+    profile.display_name,
+    profile.username,
+    tagsValue,
+    txClient,
+  ]);
   return (
     <PageLayout title="Upload new beak">
       {!file ? (
@@ -220,7 +272,7 @@ const UploadPage = () => {
               </ButtonContainer>
             </Box>
           )}
-          {license && !license.includes('by') && (
+          {license && !license.includes('by') && !isCompletedLicense && (
             <Box>
               <Title>Allow adaptations of your work to be shared?</Title>
               <ButtonContainer>
@@ -271,13 +323,25 @@ const UploadPage = () => {
           )}
           {isCompletedLicense && (
             <Box style={{ gap: 24 }}>
-              <Input label="Title" placeholder="My awesome beak" />
-              <Input label="Tags" placeholder="#Guitar, #Punk, #OtherTag" />
+              <Input
+                label="Title"
+                placeholder="My awesome beak"
+                value={nameValue}
+                onChange={onChangeName}
+              />
+              <Input
+                label="Tags"
+                placeholder="#Guitar, #Punk, #OtherTag"
+                value={tagsValue}
+                onChange={onChangeTags}
+              />
               <TextArea
                 label="Description"
                 placeholder="Description for beak"
+                value={descriptionValue}
+                onChange={onChangeDescription}
               />
-              <SubmitButton>Submit</SubmitButton>
+              <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
             </Box>
           )}
         </>

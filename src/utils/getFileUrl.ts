@@ -1,5 +1,7 @@
+import { FILE_API_ENDPOINT } from '@constants';
+
 const getFileUrl = (path: string) => {
-  return `http://10.200.96.203:8080/download?path=${path}`;
+  return `${FILE_API_ENDPOINT}/download/${path}`;
 };
 
 export default getFileUrl;

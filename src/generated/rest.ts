@@ -16,11 +16,15 @@ export interface ParrotsBeak {
   file_index?: string;
   name?: string;
   creator_username?: string;
+  creator_display_name?: string;
   description?: string;
   license?: string;
 
   /** @format uint64 */
   respect_count?: string;
+
+  /** @format int64 */
+  created_at?: string;
   linked_beaks?: string[];
   tags?: string[];
 }
@@ -30,10 +34,11 @@ export interface ParrotsComment {
   id?: string;
   creator?: string;
   username?: string;
+  display_name?: string;
   comment?: string;
 
-  /** @format uint64 */
-  timestamp?: string;
+  /** @format int64 */
+  created_at?: string;
 
   /** @format uint64 */
   beak_id?: string;

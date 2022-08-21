@@ -20,6 +20,7 @@ export interface MsgUploadBeak {
   fileIndex: string;
   name: string;
   creatorUsername: string;
+  creatorDisplayName: string;
   description: string;
   license: string;
   linkedBeaks: number[];
@@ -40,8 +41,8 @@ export interface MsgSendRespectResponse {}
 export interface MsgCreateComment {
   creator: string;
   username: string;
+  displayName: string;
   comment: string;
-  timestamp: number;
   beakId: number;
 }
 
@@ -225,6 +226,7 @@ const baseMsgUploadBeak: object = {
   fileIndex: "",
   name: "",
   creatorUsername: "",
+  creatorDisplayName: "",
   description: "",
   license: "",
   linkedBeaks: 0,
@@ -245,19 +247,22 @@ export const MsgUploadBeak = {
     if (message.creatorUsername !== "") {
       writer.uint32(34).string(message.creatorUsername);
     }
+    if (message.creatorDisplayName !== "") {
+      writer.uint32(42).string(message.creatorDisplayName);
+    }
     if (message.description !== "") {
-      writer.uint32(42).string(message.description);
+      writer.uint32(50).string(message.description);
     }
     if (message.license !== "") {
-      writer.uint32(50).string(message.license);
+      writer.uint32(58).string(message.license);
     }
-    writer.uint32(58).fork();
+    writer.uint32(66).fork();
     for (const v of message.linkedBeaks) {
       writer.uint64(v);
     }
     writer.ldelim();
     for (const v of message.tags) {
-      writer.uint32(66).string(v!);
+      writer.uint32(74).string(v!);
     }
     return writer;
   },
@@ -284,12 +289,15 @@ export const MsgUploadBeak = {
           message.creatorUsername = reader.string();
           break;
         case 5:
-          message.description = reader.string();
+          message.creatorDisplayName = reader.string();
           break;
         case 6:
-          message.license = reader.string();
+          message.description = reader.string();
           break;
         case 7:
+          message.license = reader.string();
+          break;
+        case 8:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
@@ -299,7 +307,7 @@ export const MsgUploadBeak = {
             message.linkedBeaks.push(longToNumber(reader.uint64() as Long));
           }
           break;
-        case 8:
+        case 9:
           message.tags.push(reader.string());
           break;
         default:
@@ -337,6 +345,14 @@ export const MsgUploadBeak = {
     } else {
       message.creatorUsername = "";
     }
+    if (
+      object.creatorDisplayName !== undefined &&
+      object.creatorDisplayName !== null
+    ) {
+      message.creatorDisplayName = String(object.creatorDisplayName);
+    } else {
+      message.creatorDisplayName = "";
+    }
     if (object.description !== undefined && object.description !== null) {
       message.description = String(object.description);
     } else {
@@ -367,6 +383,8 @@ export const MsgUploadBeak = {
     message.name !== undefined && (obj.name = message.name);
     message.creatorUsername !== undefined &&
       (obj.creatorUsername = message.creatorUsername);
+    message.creatorDisplayName !== undefined &&
+      (obj.creatorDisplayName = message.creatorDisplayName);
     message.description !== undefined &&
       (obj.description = message.description);
     message.license !== undefined && (obj.license = message.license);
@@ -409,6 +427,14 @@ export const MsgUploadBeak = {
       message.creatorUsername = object.creatorUsername;
     } else {
       message.creatorUsername = "";
+    }
+    if (
+      object.creatorDisplayName !== undefined &&
+      object.creatorDisplayName !== null
+    ) {
+      message.creatorDisplayName = object.creatorDisplayName;
+    } else {
+      message.creatorDisplayName = "";
     }
     if (object.description !== undefined && object.description !== null) {
       message.description = object.description;
@@ -607,8 +633,8 @@ export const MsgSendRespectResponse = {
 const baseMsgCreateComment: object = {
   creator: "",
   username: "",
+  displayName: "",
   comment: "",
-  timestamp: 0,
   beakId: 0,
 };
 
@@ -620,11 +646,11 @@ export const MsgCreateComment = {
     if (message.username !== "") {
       writer.uint32(18).string(message.username);
     }
-    if (message.comment !== "") {
-      writer.uint32(26).string(message.comment);
+    if (message.displayName !== "") {
+      writer.uint32(26).string(message.displayName);
     }
-    if (message.timestamp !== 0) {
-      writer.uint32(32).uint64(message.timestamp);
+    if (message.comment !== "") {
+      writer.uint32(34).string(message.comment);
     }
     if (message.beakId !== 0) {
       writer.uint32(40).uint64(message.beakId);
@@ -646,10 +672,10 @@ export const MsgCreateComment = {
           message.username = reader.string();
           break;
         case 3:
-          message.comment = reader.string();
+          message.displayName = reader.string();
           break;
         case 4:
-          message.timestamp = longToNumber(reader.uint64() as Long);
+          message.comment = reader.string();
           break;
         case 5:
           message.beakId = longToNumber(reader.uint64() as Long);
@@ -674,15 +700,15 @@ export const MsgCreateComment = {
     } else {
       message.username = "";
     }
+    if (object.displayName !== undefined && object.displayName !== null) {
+      message.displayName = String(object.displayName);
+    } else {
+      message.displayName = "";
+    }
     if (object.comment !== undefined && object.comment !== null) {
       message.comment = String(object.comment);
     } else {
       message.comment = "";
-    }
-    if (object.timestamp !== undefined && object.timestamp !== null) {
-      message.timestamp = Number(object.timestamp);
-    } else {
-      message.timestamp = 0;
     }
     if (object.beakId !== undefined && object.beakId !== null) {
       message.beakId = Number(object.beakId);
@@ -696,8 +722,9 @@ export const MsgCreateComment = {
     const obj: any = {};
     message.creator !== undefined && (obj.creator = message.creator);
     message.username !== undefined && (obj.username = message.username);
+    message.displayName !== undefined &&
+      (obj.displayName = message.displayName);
     message.comment !== undefined && (obj.comment = message.comment);
-    message.timestamp !== undefined && (obj.timestamp = message.timestamp);
     message.beakId !== undefined && (obj.beakId = message.beakId);
     return obj;
   },
@@ -714,15 +741,15 @@ export const MsgCreateComment = {
     } else {
       message.username = "";
     }
+    if (object.displayName !== undefined && object.displayName !== null) {
+      message.displayName = object.displayName;
+    } else {
+      message.displayName = "";
+    }
     if (object.comment !== undefined && object.comment !== null) {
       message.comment = object.comment;
     } else {
       message.comment = "";
-    }
-    if (object.timestamp !== undefined && object.timestamp !== null) {
-      message.timestamp = object.timestamp;
-    } else {
-      message.timestamp = 0;
     }
     if (object.beakId !== undefined && object.beakId !== null) {
       message.beakId = object.beakId;

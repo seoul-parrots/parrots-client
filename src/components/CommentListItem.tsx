@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { formatDistanceToNow } from 'date-fns';
 import { boxStyles } from '@styles';
 import getAvatarUrl from '@utils/getAvatarUrl';
+import { ParrotsComment } from '@generated/rest';
 
 const Container = styled.div`
   display: flex;
@@ -51,25 +52,27 @@ const Content = styled.div`
 `;
 
 export interface CommentProps {
-  comment: any;
+  comment: ParrotsComment;
 }
 
 const CommentListItem = ({ comment }: CommentProps) => {
-  const formattedCreatedAt = formatDistanceToNow(new Date());
+  const formattedCreatedAt = formatDistanceToNow(
+    new Date(Number(comment.created_at!))
+  );
 
   return (
     <Container>
-      <Avatar src={getAvatarUrl('asdasd')} />
+      <Avatar src={getAvatarUrl(comment.creator!)} />
       <InnerContainer>
         <InfoContainer>
-          <DisplayName>Daewoon Kim</DisplayName>
+          <DisplayName>{comment.display_name!}</DisplayName>
           <CreatedAt>
             {formattedCreatedAt.includes('less')
               ? 'Just now'
               : `${formattedCreatedAt} ago`}
           </CreatedAt>
         </InfoContainer>
-        <Content>aasdasdasdasd</Content>
+        <Content>{comment.comment}</Content>
       </InnerContainer>
     </Container>
   );

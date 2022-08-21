@@ -3,6 +3,7 @@ import type { ChainInfo } from '@keplr-wallet/types';
 export const CHAIN_ID = 'parrots';
 export const RPC_ENDPOINT = 'http://10.200.96.204:26657';
 export const REST_ENDPOINT = 'http://10.200.96.204:1317';
+export const FILE_API_ENDPOINT = 'http://10.200.96.203:8080';
 
 export const TESTNET_CHAIN_INFO: ChainInfo = {
   chainId: 'parrots',

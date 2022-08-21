@@ -1,9 +1,12 @@
 import styled from '@emotion/styled';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import CommentListItem from '@components/CommentListItem';
 import getAvatarUrl from '@utils/getAvatarUrl';
 import { boxStyles } from '@styles';
 import RoundButton from '@components/RoundButton';
+import { ParrotsComment } from '@generated/rest';
+import { useAuthenticatedAuth } from '@contexts/AuthContext';
+import useInputProps from '@hooks/useInputProps';
 
 const Container = styled.div`
   margin-right: 16px;
@@ -48,6 +51,7 @@ const Input = styled.input`
   font-size: 16px;
   line-height: 19px;
   outline: none;
+  color: #ffffff;
 
   font-style: italic;
   ::placeholder {
@@ -64,10 +68,45 @@ const SubmitButton = styled(RoundButton)`
 `;
 
 export interface CommentListProps {
-  comments: any[];
+  beakId: string;
+  comments: ParrotsComment[];
+  onSubmit: () => void;
 }
 
-const CommentList = ({ comments }: CommentListProps) => {
+const CommentList = ({ beakId, comments, onSubmit }: CommentListProps) => {
+  const { profile, txClient, address } = useAuthenticatedAuth();
+  const {
+    value: commentValue,
+    onChange: onChangeCommentValue,
+    setValue: setCommentValue,
+  } = useInputProps('');
+  const handleSubmit = useCallback(async () => {
+    const response = await txClient.signAndBroadcast([
+      txClient.msgCreateComment({
+        creator: address,
+        username: profile.username!,
+        displayName: profile.display_name!,
+        comment: commentValue,
+        beakId: Number(beakId),
+      }),
+    ]);
+    if (response.code !== 0) {
+      alert('Error occurred during comment');
+      return;
+    }
+    setCommentValue('');
+    onSubmit();
+  }, [
+    address,
+    beakId,
+    commentValue,
+    onSubmit,
+    profile.display_name,
+    profile.username,
+    setCommentValue,
+    txClient,
+  ]);
+
   return (
     <Container>
       <Head>
@@ -75,10 +114,14 @@ const CommentList = ({ comments }: CommentListProps) => {
           Comments <CommentCount>{comments.length}</CommentCount>
         </Title>
         <InputBox>
-          <Avatar src={getAvatarUrl('asdasd')} />
+          <Avatar src={getAvatarUrl(address)} />
           <InputControlContainer>
-            <Input placeholder="Leave comment as ‘beomjun.gil’..." />
-            <SubmitButton>Submit</SubmitButton>
+            <Input
+              placeholder={`Leave comment as ‘${profile.username}’...`}
+              value={commentValue}
+              onChange={onChangeCommentValue}
+            />
+            <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
           </InputControlContainer>
         </InputBox>
       </Head>

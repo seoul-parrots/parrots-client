@@ -20,7 +20,7 @@ const Router = () => (
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/feed" element={<FeedPage />} />
             <Route path="/upload" element={<UploadPage />} />
-            <Route path="/beak/:id" element={<BeakDetailPage />} />
+            <Route path="/beaks/:id" element={<BeakDetailPage />} />
             <Route path="/my/beaks" element={<MyBeakListPage />} />
             <Route path="/my/profile" element={<MyProfilePage />} />
           </Route>

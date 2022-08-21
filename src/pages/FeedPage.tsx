@@ -61,7 +61,7 @@ const FeedPage = () => {
     loadFeedItems();
   }, [loadFeedItems]);
 
-  const title = useMemo(() => {
+  const pageTitle = useMemo(() => {
     if (tag) {
       return `Search Result: ‘${tag}’`;
     }
@@ -73,12 +73,14 @@ const FeedPage = () => {
     return 'Explore';
   }, [searchValue, tag]);
   return (
-    <PageLayout title={title} isWide>
+    <PageLayout title={pageTitle} isWide>
       <Container>
         <Feed>
-          {beaks.map((beak) => (
-            <FeedItem key={beak.id} beak={beak} />
-          ))}
+          {beaks
+            .sort((a, b) => Number(b.created_at) - Number(a.created_at))
+            .map((beak) => (
+              <FeedItem key={beak.id} beak={beak} />
+            ))}
         </Feed>
         <RightBoxContainer>
           <SearchBox>

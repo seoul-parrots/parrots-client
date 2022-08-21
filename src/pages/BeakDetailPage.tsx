@@ -10,6 +10,12 @@ import SampleMp3 from '@assets/sample.mp3';
 import CommentList from '@components/CommentList';
 import TinyBeakCard from '@components/TinyBeakCard';
 import { Download, Respect } from '@components/Icon';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { ParrotsBeak, ParrotsComment, ParrotsProfile } from '@generated/rest';
+import { useAuthenticatedAuth } from '@contexts/AuthContext';
+import { useParams } from 'react-router-dom';
+import getFileUrl from '@utils/getFileUrl';
+import WrappedTinyBeakCard from '@components/WrappedTinyBeakCard';
 
 const Container = styled.div`
   display: flex;
@@ -116,22 +122,62 @@ const ActionText = styled.span`
 `;
 
 const BeakDetailPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const [beak, setBeak] = useState<ParrotsBeak>();
+  const [comments, setComments] = useState<ParrotsComment[]>();
+  const { queryClient } = useAuthenticatedAuth();
+  const [authorProfile, setAuthorProfile] = useState<ParrotsProfile>();
+
+  const loadComments = useCallback(async () => {
+    const { data } = await queryClient.queryGetCommentsByBeakId({
+      beakId: id,
+    });
+    setComments(data.comments);
+  }, [id, queryClient]);
+
+  useLayoutEffect(() => {
+    if (!id) return;
+    (async () => {
+      const { data } = await queryClient.queryGetBeakById({ id });
+      setBeak(data.beak);
+      loadComments();
+    })();
+  }, [id, loadComments, queryClient]);
+
+  useLayoutEffect(() => {
+    (async () => {
+      if (!beak) return;
+      const { data } = await queryClient.queryGetProfileByCreator({
+        creator: beak.creator,
+      });
+      setAuthorProfile(data.profile);
+    })();
+  }, [beak, queryClient]);
+
+  if (!beak) return <>Loading...</>;
+
   return (
-    <PageLayout title="A" isWide>
+    <PageLayout title={beak.name} isWide>
       <Container>
         <InnerContainer>
-          <MarginedBeakCard variant="detail" url={SampleMp3} respectCount={1} />
+          <MarginedBeakCard
+            variant="detail"
+            url={getFileUrl(beak.file_index!)}
+            respectCount={1}
+          />
           <UsedBeakCardListContainer>
             <Name>Used Beaks</Name>
             <UsedBeakCardList>
-              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
-              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
-              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
-              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
-              <TinyBeakCard name="asd" authorName="author" address="asdsd" />
+              {beak.linked_beaks!.map((beakId) => (
+                <WrappedTinyBeakCard key={beakId} beakId={beakId} />
+              ))}
             </UsedBeakCardList>
           </UsedBeakCardListContainer>
-          <CommentList comments={[{ id: 'asd' }]} />
+          <CommentList
+            beakId={beak.id!}
+            comments={comments ?? []}
+            onSubmit={loadComments}
+          />
         </InnerContainer>
         <RightBoxContainer>
           <RightBox>
@@ -155,28 +201,24 @@ const BeakDetailPage = () => {
               </Description>
             </RightBoxItem>
             <RightBoxItem title="Description">
-              <Tag>YEAH</Tag>
-              <Tag>YEAH</Tag>
-              <Tag>YEAH</Tag>
+              {beak.tags!.map((tag) => (
+                <Tag>{tag}</Tag>
+              ))}
             </RightBoxItem>
             <RightBoxItem title="License">
-              <Tag>YEAH</Tag>
-              <Tag>YEAH</Tag>
-              <Tag>YEAH</Tag>
+              <Tag>{beak.license}</Tag>
             </RightBoxItem>
             <AuthorInfo>
               <AuthorInnerContainer>
-                <Avatar src={getAvatarUrl('1111')} />
+                <Avatar src={getAvatarUrl(beak.creator!)} />
                 <AuthorSummary>
-                  <AuthorDisplayName>Beomjun Gil</AuthorDisplayName>
-                  <AuthorUsername>@beomjun.gil</AuthorUsername>
+                  <AuthorDisplayName>
+                    {beak.creator_display_name}
+                  </AuthorDisplayName>
+                  <AuthorUsername>@{beak.creator_username}</AuthorUsername>
                 </AuthorSummary>
               </AuthorInnerContainer>
-              <AuthorBio>
-                I’m guitarlist who knows
-                <br />
-                Programming.
-              </AuthorBio>
+              <AuthorBio>{authorProfile?.description || '...'}</AuthorBio>
             </AuthorInfo>
           </DetailBox>
         </RightBoxContainer>
