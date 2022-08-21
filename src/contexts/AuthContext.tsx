@@ -77,7 +77,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [address]);
 
   const authenticate = useCallback(async () => {
-    if (window.location.href === 'http://localhost:5173/') return;
     setIsAuthenticating(true);
 
     if (!window.keplr) {

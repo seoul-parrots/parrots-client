@@ -7,6 +7,7 @@ import RoundButton from '@components/RoundButton';
 import { ParrotsComment } from '@generated/rest';
 import { useAuthenticatedAuth } from '@contexts/AuthContext';
 import useInputProps from '@hooks/useInputProps';
+import toast from 'react-hot-toast';
 
 const Container = styled.div`
   margin-right: 16px;
@@ -80,32 +81,43 @@ const CommentList = ({ beakId, comments, onSubmit }: CommentListProps) => {
     onChange: onChangeCommentValue,
     setValue: setCommentValue,
   } = useInputProps('');
-  const handleSubmit = useCallback(async () => {
-    const response = await txClient.signAndBroadcast([
-      txClient.msgCreateComment({
-        creator: address,
-        username: profile.username!,
-        displayName: profile.display_name!,
-        comment: commentValue,
-        beakId: Number(beakId),
-      }),
-    ]);
-    if (response.code !== 0) {
-      alert('Error occurred during comment');
-      return;
-    }
-    setCommentValue('');
-    onSubmit();
-  }, [
-    address,
-    beakId,
-    commentValue,
-    onSubmit,
-    profile.display_name,
-    profile.username,
-    setCommentValue,
-    txClient,
-  ]);
+  const handleSubmit = useCallback(
+    () =>
+      toast.promise(
+        (async () => {
+          const response = await txClient.signAndBroadcast([
+            txClient.msgCreateComment({
+              creator: address,
+              username: profile.username!,
+              displayName: profile.display_name!,
+              comment: commentValue,
+              beakId: Number(beakId),
+            }),
+          ]);
+          if (response.code !== 0) {
+            alert('Error occurred during comment');
+            return;
+          }
+          setCommentValue('');
+          onSubmit();
+        })(),
+        {
+          loading: 'Commenting...',
+          error: 'Error',
+          success: 'Comment complete!',
+        }
+      ),
+    [
+      address,
+      beakId,
+      commentValue,
+      onSubmit,
+      profile.display_name,
+      profile.username,
+      setCommentValue,
+      txClient,
+    ]
+  );
 
   return (
     <Container>
